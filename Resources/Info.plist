@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>CFBundleIdentifier</key><string>local.traffic.meter</string>
+  <key>CFBundleName</key><string>NetMeter</string>
+  <key>CFBundleDisplayName</key><string>NetMeter</string>
+  <key>CFBundleExecutable</key><string>NetMeter</string>
+  <key>CFBundleIconFile</key><string>AppIcon</string>
+  <key>CFBundleDevelopmentRegion</key><string>en</string>
+  <key>CFBundleLocalizations</key><array><string>en</string><string>ru</string><string>ar</string><string>zh-Hans</string></array>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>LSUIElement</key><true/>
+  <key>NSHighResolutionCapable</key><true/>
+  <key>LSMinimumSystemVersion</key><string>13.0</string>
+  <key>SURequireSignedFeed</key><true/>
+  <key>SUVerifyUpdateBeforeExtraction</key><true/>
+  <key>SUScheduledCheckInterval</key><integer>86400</integer>
+  <key>SUAutomaticallyUpdate</key><false/>
+  <key>SUAllowsAutomaticUpdates</key><false/>
+  <key>SUEnableSystemProfiling</key><false/>
+  <key>SUShowReleaseNotes</key><true/>
+</dict></plist>

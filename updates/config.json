@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0",
+  "build": 1,
+  "repository": "Coloded/NetMeter_MacOS",
+  "publicEdKey": "E20wovJ+M6eTqRPzLO9Y88fu9R5LwhsTXxdOw1opS9k=",
+  "keychainAccount": "local.traffic.meter.sparkle"
+}

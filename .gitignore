@@ -1,0 +1,11 @@
+.build/
+dist/
+TrafficMeter.app/
+.DS_Store
+__pycache__/
+*.pem
+*.p12
+*.key
+
+NetMeter.app/
+._*
