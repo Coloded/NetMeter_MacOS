@@ -1,0 +1,10 @@
+{
+  "tag": "v1.1.1",
+  "commit": "2b3c1674aebcecf5573d22e3c563d93fade69429",
+  "build": 3,
+  "sha256": {
+    "NetMeter-stable.dmg": "91d7b1098ee095c31c6c945317a5b586f43f708ecce9d47d255c68b9dd0cc706",
+    "appcast.xml": "d396d806f908d3e93808f44b194b384bf0aeef9dfc657f9b9847a2248e20f854",
+    "SHA256SUMS.txt": "93443fd3855cfbccb32425166ff2667cd73b6e63dafe0aa3cfbc388bb5eebf44"
+  }
+}

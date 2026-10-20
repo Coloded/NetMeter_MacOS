@@ -1,0 +1,36 @@
+<?xml version="1.0" standalone="yes"?><!-- sparkle-sign-warning:
+IMPORTANT: This file was signed by Sparkle. Any modifications to this file requires re-signing this file with generate_appcast or sign_update! The signed signature will be embedded at the end of this file.
+--><rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>NetMeter</title>
+        <item>
+            <title>1.1.1</title>
+            <pubDate>Tue, 20 Oct 2026 13:07:02 +0300</pubDate>
+            <sparkle:version>3</sparkle:version>
+            <sparkle:shortVersionString>1.1.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+            <description sparkle:format="markdown"><![CDATA[# NetMeter 1.1.1
+
+## English
+
+- General → Launch at login: start NetMeter when signing in to macOS. The checkbox reflects the actual system registration and shows an approval link when macOS requires it.
+- All 94 interface strings checked across English, Russian, Arabic and Simplified Chinese; matching grid controls use consistent wording.
+- Release publication through SSH and GitHub Actions. Sparkle signing keys remain in the local Keychain.
+
+Install the app in Applications before enabling launch at login. Requires macOS 13 or later; Universal for Apple Silicon and Intel. Developer ID notarization is not configured.
+
+## Русский
+
+- Основные → Запускать при входе в систему: запуск NetMeter при входе в macOS. Галочка показывает реальное состояние автозапуска; при необходимости появляется ссылка для подтверждения в системных настройках.
+- Проверены все 94 строки на английском, русском, арабском и упрощённом китайском; формулировки управления сеткой приведены к единому виду.
+- Публикация выпусков через SSH и GitHub Actions. Ключ подписи Sparkle остаётся в локальной Keychain.
+
+Перед включением автозапуска перенесите приложение в «Программы». Требуется macOS 13 или новее; Universal для Apple Silicon и Intel. Notarization через Developer ID не настроена.
+]]></description>
+            <enclosure url="https://github.com/Coloded/NetMeter_MacOS/releases/latest/download/NetMeter-stable.dmg" length="1733966" type="application/octet-stream" sparkle:edSignature="xZ550+4OW+pJtgm8TvdAH8uJ7TmtmvNgHTuKKG66TpNxFqEzkwopDHTT2BNAZ6B2Wi/HiO1UmsC4Bdvg/9uiDg=="></enclosure>
+        </item>
+    </channel>
+</rss><!-- sparkle-signatures:
+edSignature: kBhYN1ccdp5/cgiclYO+CUgWPNuwOCI52/X1a085KcHllIfaKyZUi1pjtT+PHD0rKlrDMo0KADHKTJqRuImEDQ==
+length: 2827
+-->
