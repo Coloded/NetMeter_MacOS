@@ -97,3 +97,8 @@
 "startup.error_title" = "Не удалось изменить автозапуск";
 "startup.error_body" = "Убедитесь, что NetMeter установлен в папке «Программы», и проверьте его разрешение в Системных настройках → Основные → Объекты входа.";
 "common.ok" = "ОК";
+
+// Compact menu-bar traffic display
+"status.interface" = "Интерфейс: %@";
+"status.download" = "Загрузка: %@";
+"status.upload" = "Отдача: %@";

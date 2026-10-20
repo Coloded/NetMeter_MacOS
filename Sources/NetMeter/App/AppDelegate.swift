@@ -33,8 +33,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenu
         updates = UpdateController()
         createNetworkPanel()
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        statusItem.button?.font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .medium)
-        statusItem.button?.title = "↓ 0 B/s  ↑ 0 B/s"
+        updateStatusRates(NetworkSample(down: 0, up: 0))
         buildStatusMenu()
         makeResourcePanels()
         applyGraphAppearance()
@@ -82,7 +81,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenu
         previousTime = now
         graph.samples.append(sample)
         if graph.samples.count > 60 { graph.samples.removeFirst() }
-        statusItem.button?.title = "↓ \(formatRate(sample.down))  ↑ \(formatRate(sample.up))"
+        updateStatusRates(sample)
         updateTotalsLabel()
         let readings = ["cpu": metrics.cpu(), "memory": metrics.memory(), "gpu": metrics.gpuAvailable ? metrics.gpu() : nil, "disk": metrics.disk()]
         for (id, view) in resourceViews { view.append(readings[id] ?? nil) }

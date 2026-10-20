@@ -94,6 +94,8 @@ GPU monitoring is unavailable when the system does not provide the required data
 
 ## Using the graphs
 
+The menu-bar indicator uses two rows: download above upload, with full speed units. Hover over it to see the monitored interface, current rates and traffic totals for this session and all time.
+
 Enable **General → Launch at login** to start NetMeter when you sign in to macOS. The checkbox reads the actual macOS Login Items state; if approval is required, use the System Settings button. Install NetMeter in Applications before enabling it.
 
 Right-click a graph → **Color → Graph / Label** to open the native macOS color panel with its eyedropper. Network and disk have separate controls for both lines and their labels; heading colors are configurable too. Colors are saved between launches.

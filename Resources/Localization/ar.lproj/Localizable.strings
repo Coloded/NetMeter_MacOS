@@ -97,3 +97,8 @@
 "startup.error_title" = "تعذّر تغيير التشغيل عند تسجيل الدخول";
 "startup.error_body" = "تأكد من تثبيت NetMeter في مجلد التطبيقات وتحقق من الإذن في إعدادات النظام ← عام ← عناصر الدخول.";
 "common.ok" = "موافق";
+
+// Compact menu-bar traffic display
+"status.interface" = "الواجهة: %@";
+"status.download" = "التنزيل: %@";
+"status.upload" = "الرفع: %@";

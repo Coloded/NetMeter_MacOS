@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.2
+
+- Compact two-row download/upload display in the menu bar with full speed units.
+- Localized hover details: active interface, current rates, session and lifetime traffic totals.
+- Native template rendering for light/dark menu bars and an accessible text label.
+
 ## 1.1.1
 
 - Native macOS launch-at-login checkbox with actual system status and approval handling.

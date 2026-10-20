@@ -97,3 +97,8 @@
 "startup.error_title" = "无法更改登录时启动设置";
 "startup.error_body" = "请确认 NetMeter 已安装在“应用程序”文件夹中，并在系统设置 → 通用 → 登录项中检查权限。";
 "common.ok" = "好";
+
+// Compact menu-bar traffic display
+"status.interface" = "接口：%@";
+"status.download" = "下载：%@";
+"status.upload" = "上传：%@";
