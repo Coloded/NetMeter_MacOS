@@ -4,33 +4,33 @@ IMPORTANT: This file was signed by Sparkle. Any modifications to this file requi
     <channel>
         <title>NetMeter</title>
         <item>
-            <title>1.1.1</title>
-            <pubDate>Tue, 20 Oct 2026 13:07:02 +0300</pubDate>
-            <sparkle:version>3</sparkle:version>
-            <sparkle:shortVersionString>1.1.1</sparkle:shortVersionString>
+            <title>1.1.2</title>
+            <pubDate>Tue, 20 Oct 2026 13:23:33 +0300</pubDate>
+            <sparkle:version>4</sparkle:version>
+            <sparkle:shortVersionString>1.1.2</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
-            <description sparkle:format="markdown"><![CDATA[# NetMeter 1.1.1
+            <description sparkle:format="markdown"><![CDATA[# NetMeter 1.1.2
 
 ## English
 
-- General → Launch at login: start NetMeter when signing in to macOS. The checkbox reflects the actual system registration and shows an approval link when macOS requires it.
-- All 94 interface strings checked across English, Russian, Arabic and Simplified Chinese; matching grid controls use consistent wording.
-- Release publication through SSH and GitHub Actions. Sparkle signing keys remain in the local Keychain.
+- Compact menu-bar indicator: download on the first row, upload on the second. Full B/s, KB/s, MB/s and GB/s units retained.
+- Hover to see the monitored interface, current download/upload speeds, session traffic and lifetime traffic totals.
+- Tooltip text translated into all four interface languages. Native template rendering adapts to light and dark menu bars.
 
-Install the app in Applications before enabling launch at login. Requires macOS 13 or later; Universal for Apple Silicon and Intel. Developer ID notarization is not configured.
+Requires macOS 13 or later; Universal for Apple Silicon and Intel. Developer ID notarization is not configured.
 
 ## Русский
 
-- Основные → Запускать при входе в систему: запуск NetMeter при входе в macOS. Галочка показывает реальное состояние автозапуска; при необходимости появляется ссылка для подтверждения в системных настройках.
-- Проверены все 94 строки на английском, русском, арабском и упрощённом китайском; формулировки управления сеткой приведены к единому виду.
-- Публикация выпусков через SSH и GitHub Actions. Ключ подписи Sparkle остаётся в локальной Keychain.
+- Компактный индикатор в строке меню: загрузка сверху, отдача снизу. Полные единицы B/s, KB/s, MB/s и GB/s сохранены.
+- При наведении: отслеживаемый интерфейс, текущая загрузка и отдача, объём трафика за сеанс и всё время.
+- Подсказка переведена на четыре языка. Индикатор адаптируется к светлой и тёмной строке меню.
 
-Перед включением автозапуска перенесите приложение в «Программы». Требуется macOS 13 или новее; Universal для Apple Silicon и Intel. Notarization через Developer ID не настроена.
+Требуется macOS 13 или новее; Universal для Apple Silicon и Intel. Notarization через Developer ID не настроена.
 ]]></description>
-            <enclosure url="https://github.com/Coloded/NetMeter_MacOS/releases/latest/download/NetMeter-stable.dmg" length="1733966" type="application/octet-stream" sparkle:edSignature="xZ550+4OW+pJtgm8TvdAH8uJ7TmtmvNgHTuKKG66TpNxFqEzkwopDHTT2BNAZ6B2Wi/HiO1UmsC4Bdvg/9uiDg=="></enclosure>
+            <enclosure url="https://github.com/Coloded/NetMeter_MacOS/releases/latest/download/NetMeter-stable.dmg" length="1738559" type="application/octet-stream" sparkle:edSignature="hfN6dJI1pSQ33uxt9cwGyrZoRtWUa5JkHqDGQO7jzp3iufBloadZ8YF2fOAYfpdcGi8mDtnf/kUN4MLViY/HDw=="></enclosure>
         </item>
     </channel>
 </rss><!-- sparkle-signatures:
-edSignature: kBhYN1ccdp5/cgiclYO+CUgWPNuwOCI52/X1a085KcHllIfaKyZUi1pjtT+PHD0rKlrDMo0KADHKTJqRuImEDQ==
-length: 2827
+edSignature: qHBHJrjKr8d/8QkqAZUTlpBNMUdIvSlO/PNAzqorYQ5IPmlAJNONK7kxc0bz0oMzTqWUUp1XasLEXKwjpv5UDw==
+length: 2362
 -->
