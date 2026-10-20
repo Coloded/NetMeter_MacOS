@@ -15,9 +15,15 @@ for language in languages:
     assert len(catalog) == len(entries), f"Duplicate keys: {language}"
     catalogs[language] = catalog
 base = catalogs["en"]
+# Include keys built dynamically by graph menus and graph/window titles.
+for key in [f"graph.{graph}" for graph in ("network", "memory", "cpu", "gpu", "disk")]:
+    assert key in base, f"Missing dynamic key: {key}"
 for language, catalog in catalogs.items():
     assert catalog.keys() == base.keys(), f"Missing translations: {language}"
+    assert catalog["graph.grid"] == catalog["settings.grid"], f"Inconsistent grid wording: {language}"
     for key, text in catalog.items():
+        if language != "en" and key not in {"app.name", "graph.cpu", "graph.gpu"}:
+            assert text != base[key], f"Untranslated English text: {language}:{key}"
         assert text.strip(), f"Empty translation: {language}:{key}"
         formats = lambda value: re.findall(r"%(?:\d+\$)?(?:\.\d+)?[@df]", value.replace("%%", ""))
         assert formats(text) == formats(base[key]), f"Format mismatch: {language}:{key}"

@@ -1,21 +1,17 @@
-# NetMeter 1.1.0
+# NetMeter 1.1.1
 
 ## English
 
-- Right-click any graph → Color → Graph / Label: native macOS palette with eyedropper, independent line and label colors, saved between launches.
-- Network and disk retain separate controls for both data series. Heading colors can also be changed.
-- General settings → Application style: Classic or macOS. Changes apply immediately to every graph, including the per-core CPU grid. macOS style follows system light/dark appearance.
-- Click a graph to open Activity Monitor. With Accessibility permission, NetMeter selects CPU, Memory, Disk or Network; GPU opens GPU History.
-- All new controls are available in English, Russian, Arabic and Simplified Chinese.
+- General → Launch at login: start NetMeter when signing in to macOS. The checkbox reflects the actual system registration and shows an approval link when macOS requires it.
+- All 94 interface strings checked across English, Russian, Arabic and Simplified Chinese; matching grid controls use consistent wording.
+- Release publication through SSH and GitHub Actions. Sparkle signing keys remain in the local Keychain.
 
-Requires macOS 13 or later. Universal app for Apple Silicon and Intel. The app uses an ad-hoc signature; Developer ID notarization is not configured.
+Install the app in Applications before enabling launch at login. Requires macOS 13 or later; Universal for Apple Silicon and Intel. Developer ID notarization is not configured.
 
 ## Русский
 
-- Правая кнопка по любому графику → Цвет → График / Подпись: системная палитра macOS с пипеткой. Цвета линий и подписей сохраняются после перезапуска.
-- Для сети и диска отдельно настраиваются обе линии и их подписи; можно изменить цвет заголовка.
-- Основные настройки → Стиль приложения: Классический / macOS. Применяется сразу ко всем графикам и ядрам CPU. Стиль macOS следует светлой или тёмной теме системы.
-- Клик по графику открывает Мониторинг системы. При разрешённом Универсальном доступе выбирается раздел ЦП, Память, Диск или Сеть; для GPU открывается история графического процессора.
-- Все новые пункты переведены на четыре языка.
+- Основные → Запускать при входе в систему: запуск NetMeter при входе в macOS. Галочка показывает реальное состояние автозапуска; при необходимости появляется ссылка для подтверждения в системных настройках.
+- Проверены все 94 строки на английском, русском, арабском и упрощённом китайском; формулировки управления сеткой приведены к единому виду.
+- Публикация выпусков через SSH и GitHub Actions. Ключ подписи Sparkle остаётся в локальной Keychain.
 
-Требуется macOS 13 или новее. Universal для Apple Silicon и Intel. Используется ad-hoc подпись; notarization через Developer ID не настроена.
+Перед включением автозапуска перенесите приложение в «Программы». Требуется macOS 13 или новее; Universal для Apple Silicon и Intel. Notarization через Developer ID не настроена.

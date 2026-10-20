@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1
+
+- Native macOS launch-at-login checkbox with actual system status and approval handling.
+- Checked all four interface languages and unified grid-control wording.
+- Signed release files now travel over SSH to a dedicated publication branch; GitHub Actions publishes Releases without a local API token or exporting the Sparkle private key.
+
 ## 1.1.0
 
 - Per-graph line, value-label and heading colors with the native macOS color panel and eyedropper.

@@ -11,6 +11,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenu
     var selectedInterface = defaultInterface()
     var interfaceMenu: NSMenu!
     var refreshCount = 0
+    var loginAtStartupButton: NSButton?
+    var loginAtStartupApprovalButton: NSButton?
     var settingsWindow: NSWindow?
     var sessionDown: UInt64 = 0
     var sessionUp: UInt64 = 0

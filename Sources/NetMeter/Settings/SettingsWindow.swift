@@ -3,6 +3,7 @@ import AppKit
 extension AppDelegate {
     @objc func showSettings() {
         if settingsWindow == nil { makeSettingsWindow() }
+        refreshLoginAtStartup()
         settingsWindow?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
@@ -23,19 +24,19 @@ extension AppDelegate {
     }
 
     func makeSettingsWindow() {
-        let window = NSWindow(contentRect: NSRect(x: 300, y: 300, width: 640, height: 340),
+        let window = NSWindow(contentRect: NSRect(x: 300, y: 300, width: 640, height: 400),
                               styleMask: [.titled, .closable], backing: .buffered, defer: false)
         window.title = L("settings.title")
         window.isReleasedWhenClosed = false
         window.setFrameUsingName("TrafficSettingsWindow")
         window.setFrameAutosaveName("TrafficSettingsWindow")
-        if window.frame.width < 640 { window.setContentSize(NSSize(width: 640, height: 340)) }
-        let tabs = NSTabView(frame: NSRect(x: 12, y: 10, width: 616, height: 320))
+        if window.frame.width < 640 || window.contentLayoutRect.height < 400 { window.setContentSize(NSSize(width: 640, height: 400)) }
+        let tabs = NSTabView(frame: NSRect(x: 12, y: 10, width: 616, height: 380))
         window.contentView?.addSubview(tabs)
         func tab(_ title: String) -> NSView {
             let item = NSTabViewItem(identifier: title)
             item.label = title
-            let view = NSView(frame: NSRect(x: 0, y: 0, width: 610, height: 280))
+            let view = NSView(frame: NSRect(x: 0, y: 0, width: 610, height: 340))
             item.view = view
             tabs.addTabViewItem(item)
             return view
@@ -68,6 +69,9 @@ extension AppDelegate {
         style.target = self
         style.action = #selector(changeGraphStyle(_:))
         general.addSubview(style)
+
+        for view in general.subviews { view.frame.origin.y += 60 }
+        addLoginAtStartupControls(to: general)
 
         let graphTab = tab(L("settings.graph"))
         check(L("settings.grid"), key: "grid", initial: true, y: 225, in: graphTab, tag: 2)

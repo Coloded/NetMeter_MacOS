@@ -1,0 +1,68 @@
+name: Publish signed release
+
+on:
+  push:
+    branches: [release-assets]
+    paths: [release.json, assets/**, release-notes.md, .github/workflows/publish-release.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: netmeter-release-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate signed release package and source tag
+        id: release
+        env:
+          RELEASE_REPOSITORY: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, re, subprocess
+          import xml.etree.ElementTree as ET
+          metadata = json.loads(pathlib.Path('release.json').read_text())
+          tag, commit = metadata['tag'], metadata['commit']
+          assert re.fullmatch(r'v\d+\.\d+\.\d+', tag), 'Invalid release tag'
+          assert re.fullmatch(r'[0-9a-f]{40}', commit), 'Invalid source commit'
+          actual = subprocess.check_output(['git', 'rev-parse', tag + '^{commit}'], text=True).strip()
+          assert actual == commit, 'Source tag does not match release package'
+          directory = pathlib.Path('assets')
+          expected = metadata['sha256']
+          assert set(expected) == {'NetMeter-stable.dmg', 'appcast.xml', 'SHA256SUMS.txt'}
+          for name, digest in expected.items():
+              assert hashlib.sha256((directory / name).read_bytes()).hexdigest() == digest, name + ': checksum mismatch'
+          checksums = {}
+          for line in (directory / 'SHA256SUMS.txt').read_text().splitlines():
+              digest, name = line.split(maxsplit=1)
+              checksums[name.lstrip('*')] = digest
+          assert checksums == {name: expected[name] for name in ('NetMeter-stable.dmg', 'appcast.xml')}
+          ns = '{http://www.andymatuschak.org/xml-namespaces/sparkle}'
+          item = ET.parse(directory / 'appcast.xml').find('./channel/item')
+          enclosure = item.find('enclosure')
+          assert enclosure.get('url') == 'https://github.com/' + os.environ['RELEASE_REPOSITORY'] + '/releases/latest/download/NetMeter-stable.dmg'
+          assert int(enclosure.get('length')) == (directory / 'NetMeter-stable.dmg').stat().st_size
+          assert enclosure.get(ns + 'edSignature'), 'Missing archive signature'
+          assert (enclosure.get(ns + 'shortVersionString') or item.findtext(ns + 'shortVersionString')) == tag[1:]
+          assert (enclosure.get(ns + 'version') or item.findtext(ns + 'version')) == str(metadata['build'])
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('tag=' + tag + '\n')
+          PY
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          gh release create "$RELEASE_TAG" \
+            assets/NetMeter-stable.dmg assets/appcast.xml assets/SHA256SUMS.txt \
+            --verify-tag --title "NetMeter ${RELEASE_TAG#v}" \
+            --notes-file release-notes.md --latest

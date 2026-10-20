@@ -6,7 +6,7 @@
 "graph.gpu" = "GPU";
 "graph.disk" = "系统磁盘";
 "graph.no_sensor" = "传感器数据不可用";
-"graph.grid" = "显示网格";
+"graph.grid" = "显示水平网格";
 "graph.values" = "显示数值";
 "graph.top" = "始终置顶";
 "graph.enlarge" = "放大此窗口";
@@ -90,3 +90,10 @@
 "monitor.permission_body" = "若要自动选择 CPU、内存、磁盘、网络或 GPU 历史记录，请在系统设置 → 隐私与安全性 → 辅助功能中允许 NetMeter。未授权时仍可打开活动监视器。";
 "monitor.open_settings" = "打开系统设置";
 "monitor.just_open" = "仅打开";
+
+// Login at startup
+"startup.launch" = "登录时启动";
+"startup.approve" = "在系统设置中允许…";
+"startup.error_title" = "无法更改登录时启动设置";
+"startup.error_body" = "请确认 NetMeter 已安装在“应用程序”文件夹中，并在系统设置 → 通用 → 登录项中检查权限。";
+"common.ok" = "好";
