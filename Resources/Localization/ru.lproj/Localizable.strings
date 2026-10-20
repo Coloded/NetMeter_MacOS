@@ -74,3 +74,19 @@
 "updates.no_build" = "Не задан номер сборки приложения.";
 "updates.source" = "Источник обновлений: GitHub Releases.";
 "updates.automatic" = "Проверять автоматически раз в сутки";
+
+// Graph appearance and Activity Monitor
+"color.menu" = "Цвет";
+"color.graph" = "График";
+"color.label" = "Подпись";
+"color.choose" = "Выбрать цвет…";
+"color.read" = "Чтение";
+"color.write" = "Запись";
+"color.title" = "Заголовок";
+"settings.style" = "Стиль приложения";
+"style.classic" = "Классический";
+"graph.monitor" = "Открыть Мониторинг системы";
+"monitor.permission_title" = "Выбор раздела Мониторинга системы";
+"monitor.permission_body" = "Чтобы автоматически выбирать ЦП, Память, Диск, Сеть или историю GPU, разрешите NetMeter доступ в Системных настройках → Конфиденциальность и безопасность → Универсальный доступ. Без разрешения Мониторинг системы всё равно открывается.";
+"monitor.open_settings" = "Открыть системные настройки";
+"monitor.just_open" = "Просто открыть";

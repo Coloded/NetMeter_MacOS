@@ -1,6 +1,7 @@
 import AppKit
 
 final class ResourceGraphView: NSView {
+    override func viewDidChangeEffectiveAppearance() { super.viewDidChangeEffectiveAppearance(); needsDisplay = true }
     var history: [(Double, Double)] = []
     var reading: ResourceReading?
     var percentage = true
@@ -35,15 +36,23 @@ final class ResourceGraphView: NSView {
         needsDisplay = true
     }
 
+    var graphID = "network"
+    var openMonitor: (() -> Void)?
+    override var mouseDownCanMoveWindow: Bool { false }
+    override func mouseDown(with event: NSEvent) { }
+    override func mouseUp(with event: NSEvent) {
+        if bounds.contains(convert(event.locationInWindow, from: nil)) { openMonitor?() }
+    }
+
     override func draw(_ dirtyRect: NSRect) {
-        NSColor(calibratedRed: 0.07, green: 0.09, blue: 0.13, alpha: 1).setFill()
+        GraphAppearance.background.setFill()
         bounds.fill()
         if showAllCores { drawCores(); return }
         let plot = NSRect(x: 12, y: 37, width: bounds.width - 24, height: bounds.height - 65)
-        NSColor(calibratedRed: 0.12, green: 0.16, blue: 0.21, alpha: 1).setFill()
+        GraphAppearance.plot.setFill()
         plot.fill()
         if showGrid {
-            NSColor.white.withAlphaComponent(0.12).setStroke()
+            GraphAppearance.grid.setStroke()
             for fraction in [0.25, 0.5, 0.75] {
                 let line = NSBezierPath()
                 line.move(to: NSPoint(x: plot.minX, y: plot.minY + plot.height * fraction))
@@ -52,7 +61,7 @@ final class ResourceGraphView: NSView {
             }
         }
         let scale = percentage ? 100 : max(1024, history.map { max($0.0, $0.1) }.max() ?? 0)
-        for (index, lineColor) in [color, NSColor.systemOrange].enumerated() {
+        for (index, lineColor) in [color, GraphAppearance.color(id: graphID, component: "line2", fallback: .systemOrange)].enumerated() {
             if percentage && index == 1 { continue }
             let path = NSBezierPath()
             path.lineWidth = 2
@@ -69,10 +78,10 @@ final class ResourceGraphView: NSView {
         func text(_ value: String, x: CGFloat, y: CGFloat, color: NSColor) {
             (value as NSString).draw(at: NSPoint(x: x, y: y), withAttributes: [.font: font, .foregroundColor: color])
         }
-        text(reading?.header ?? L("graph.no_sensor"), x: 12, y: bounds.height - 23, color: .white)
+        text(reading?.header ?? L("graph.no_sensor"), x: 12, y: bounds.height - 23, color: GraphAppearance.color(id: graphID, component: "title", fallback: GraphAppearance.text))
         if showRates {
-            text(reading?.footer ?? "—", x: 12, y: 10, color: color)
-            text(reading?.secondary ?? "", x: bounds.width / 2 + 10, y: 10, color: percentage ? color : .systemOrange)
+            text(reading?.footer ?? "—", x: 12, y: 10, color: GraphAppearance.color(id: graphID, component: "label1", fallback: GraphAppearance.defaultLine(id: graphID)))
+            text(reading?.secondary ?? "", x: bounds.width / 2 + 10, y: 10, color: GraphAppearance.color(id: graphID, component: percentage ? "label1" : "label2", fallback: GraphAppearance.defaultLine(id: graphID, second: !percentage)))
         }
     }
 

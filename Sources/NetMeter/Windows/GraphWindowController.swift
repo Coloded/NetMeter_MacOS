@@ -24,6 +24,7 @@ extension AppDelegate {
         graph.fixedScale = UserDefaults.standard.double(forKey: "scale")
         if let data = UserDefaults.standard.data(forKey: "downColor"), let color = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data) { graph.downColor = color }
         if let data = UserDefaults.standard.data(forKey: "upColor"), let color = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data) { graph.upColor = color }
+        graph.openMonitor = { [weak self] in self?.openActivityMonitor(id: "network") }
         panel.contentView = graph
         panel.alphaValue = UserDefaults.standard.object(forKey: "opacity") == nil ? 1 : UserDefaults.standard.double(forKey: "opacity")
         panel.level = UserDefaults.standard.object(forKey: "alwaysOnTop") as? Bool == false ? .normal : .floating
@@ -57,6 +58,8 @@ extension AppDelegate {
             window.setFrameAutosaveName("ResourceWindow-\(id)")
             let view = ResourceGraphView(frame: window.contentView!.bounds)
             view.autoresizingMask = [.width, .height]
+            view.graphID = id
+            view.openMonitor = { [weak self] in self?.openActivityMonitor(id: id) }
             view.percentage = id != "disk"
             view.color = color
             view.showGrid = UserDefaults.standard.object(forKey: "window-grid-\(id)") as? Bool ?? graph.showGrid

@@ -1,22 +1,21 @@
-# NetMeter 1.0.0
+# NetMeter 1.1.0
 
 ## English
 
-- Separate always-on-top graphs for network, memory, CPU, GPU and the system disk.
-- Live download and upload rates in the macOS menu bar.
-- Automatic primary-interface and startup-disk discovery.
-- Per-core CPU graphs in one resizable window.
-- Window snapping, saved layouts and graph-specific context menus.
-- English, Russian, Arabic and Simplified Chinese interface languages.
-- Universal build for Apple Silicon and Intel, macOS 13 or later.
-- Signed Sparkle updates through GitHub Releases.
+- Right-click any graph → Color → Graph / Label: native macOS palette with eyedropper, independent line and label colors, saved between launches.
+- Network and disk retain separate controls for both data series. Heading colors can also be changed.
+- General settings → Application style: Classic or macOS. Changes apply immediately to every graph, including the per-core CPU grid. macOS style follows system light/dark appearance.
+- Click a graph to open Activity Monitor. With Accessibility permission, NetMeter selects CPU, Memory, Disk or Network; GPU opens GPU History.
+- All new controls are available in English, Russian, Arabic and Simplified Chinese.
+
+Requires macOS 13 or later. Universal app for Apple Silicon and Intel. The app uses an ad-hoc signature; Developer ID notarization is not configured.
 
 ## Русский
 
-- Отдельные плавающие графики сети, памяти, CPU, GPU и системного диска.
-- Просмотр загрузки каждого ядра CPU в одном окне.
-- Склейка окон и сохранение их расположения.
-- Обновления через Sparkle с проверкой цифровых подписей.
-- Автоматическое определение основного интерфейса и загрузочного диска.
-- Русский, английский, арабский и упрощённый китайский интерфейс.
-- Universal-сборка для Apple Silicon и Intel, macOS 13 или новее.
+- Правая кнопка по любому графику → Цвет → График / Подпись: системная палитра macOS с пипеткой. Цвета линий и подписей сохраняются после перезапуска.
+- Для сети и диска отдельно настраиваются обе линии и их подписи; можно изменить цвет заголовка.
+- Основные настройки → Стиль приложения: Классический / macOS. Применяется сразу ко всем графикам и ядрам CPU. Стиль macOS следует светлой или тёмной теме системы.
+- Клик по графику открывает Мониторинг системы. При разрешённом Универсальном доступе выбирается раздел ЦП, Память, Диск или Сеть; для GPU открывается история графического процессора.
+- Все новые пункты переведены на четыре языка.
+
+Требуется macOS 13 или новее. Universal для Apple Silicon и Intel. Используется ad-hoc подпись; notarization через Developer ID не настроена.

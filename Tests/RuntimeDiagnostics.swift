@@ -18,6 +18,13 @@ enum RuntimeDiagnostics {
                 precondition(text != "menu.settings" && !text.isEmpty)
                 translations[language] = text
             }
+            let testID = "diagnostic-" + UUID().uuidString
+            GraphAppearance.save(.red, id: testID, component: "line1")
+            GraphAppearance.save(.blue, id: testID, component: "label1")
+            precondition(GraphAppearance.color(id: testID, component: "line1", fallback: .black).isEqual(NSColor.red))
+            precondition(GraphAppearance.color(id: testID, component: "label1", fallback: .black).isEqual(NSColor.blue))
+            precondition(GraphAppearance.color(id: testID, component: "line2", fallback: .green).isEqual(NSColor.green))
+            for component in ["line1", "label1"] { UserDefaults.standard.removeObject(forKey: "color-\(testID)-\(component)") }
             let metrics = SystemMetrics()
             _ = metrics.cpu()
             _ = metrics.cpuCores()
@@ -29,6 +36,7 @@ enum RuntimeDiagnostics {
                 "primaryInterface": defaultInterface(),
                 "activeInterfaces": activeInterfaces(),
                 "networkRoutingFixtures": true,
+                "independentColorPersistence": true,
                 "languages": translations,
                 "updaterState": UpdateController.configurationIssue(Bundle.main.infoDictionary ?? [:]) ?? "configured",
                 "cpuCoreCount": cores.count,

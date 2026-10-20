@@ -61,6 +61,14 @@ extension AppDelegate {
         language.action = #selector(selectLanguagePopup(_:))
         general.addSubview(language)
 
+        label(L("settings.style"), x: 24, y: 7, width: 150, in: general)
+        let style = NSPopUpButton(frame: NSRect(x: 200, y: 0, width: 280, height: 30))
+        style.addItems(withTitles: [L("style.classic"), "macOS"])
+        style.selectItem(at: GraphAppearance.isMacOS ? 1 : 0)
+        style.target = self
+        style.action = #selector(changeGraphStyle(_:))
+        general.addSubview(style)
+
         let graphTab = tab(L("settings.graph"))
         check(L("settings.grid"), key: "grid", initial: true, y: 225, in: graphTab, tag: 2)
         check(L("settings.rates"), key: "rates", initial: true, y: 190, in: graphTab, tag: 3)
@@ -79,14 +87,14 @@ extension AppDelegate {
         downWell.color = graph.downColor
         downWell.tag = 1
         downWell.target = self
-        downWell.action = #selector(changeColor(_:))
+        downWell.action = #selector(changeNetworkColor(_:))
         colors.addSubview(downWell)
         label(L("settings.upload"), x: 24, y: 174, width: 150, in: colors)
         let upWell = NSColorWell(frame: NSRect(x: 190, y: 168, width: 90, height: 32))
         upWell.color = graph.upColor
         upWell.tag = 2
         upWell.target = self
-        upWell.action = #selector(changeColor(_:))
+        upWell.action = #selector(changeNetworkColor(_:))
         colors.addSubview(upWell)
 
         let totals = tab(L("settings.totals"))
@@ -132,9 +140,11 @@ extension AppDelegate {
         UserDefaults.standard.set(graph.fixedScale, forKey: "scale")
     }
 
-    @objc func changeColor(_ sender: NSColorWell) {
+    @objc func changeNetworkColor(_ source: Any) {
+        guard let sender = source as? NSColorWell else { return }
         let key = sender.tag == 1 ? "downColor" : "upColor"
         if sender.tag == 1 { graph.downColor = sender.color } else { graph.upColor = sender.color }
+        GraphAppearance.save(sender.color, id: "network", component: sender.tag == 1 ? "line1" : "line2")
         if let data = try? NSKeyedArchiver.archivedData(withRootObject: sender.color, requiringSecureCoding: true) {
             UserDefaults.standard.set(data, forKey: key)
         }

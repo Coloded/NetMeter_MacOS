@@ -18,10 +18,10 @@ extension ResourceGraphView {
             let x = area.minX + CGFloat(index % grid.columns) * (cellWidth + gap)
             let y = area.maxY - CGFloat(index / grid.columns + 1) * cellHeight - CGFloat(index / grid.columns) * gap
             let plot = NSRect(x: x, y: y, width: cellWidth, height: max(cellHeight - 20, 1))
-            NSColor(calibratedRed: 0.12, green: 0.16, blue: 0.21, alpha: 1).setFill()
+            GraphAppearance.plot.setFill()
             plot.fill()
             if showGrid {
-                NSColor.white.withAlphaComponent(0.12).setStroke()
+                GraphAppearance.grid.setStroke()
                 for fraction in [0.25, 0.5, 0.75] {
                     let line = NSBezierPath()
                     line.move(to: NSPoint(x: plot.minX, y: plot.minY + plot.height * fraction))
@@ -44,7 +44,7 @@ extension ResourceGraphView {
             let value = currentCores?.indices.contains(index) == true ? String(format: " %.0f%%", currentCores![index]) : " —"
             let label = L("cpu.core", index + 1) + (showRates ? value : "")
             (label as NSString).draw(at: NSPoint(x: x, y: y + cellHeight - 15), withAttributes: [
-                .font: NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .medium), .foregroundColor: NSColor.white
+                .font: NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .medium), .foregroundColor: GraphAppearance.color(id: graphID, component: "label1", fallback: GraphAppearance.text)
             ])
         }
     }

@@ -74,3 +74,19 @@
 "updates.no_build" = "The application build number is missing.";
 "updates.source" = "Update source: GitHub Releases.";
 "updates.automatic" = "Check automatically once a day";
+
+// Graph appearance and Activity Monitor
+"color.menu" = "Color";
+"color.graph" = "Graph";
+"color.label" = "Label";
+"color.choose" = "Choose color…";
+"color.read" = "Read";
+"color.write" = "Write";
+"color.title" = "Heading";
+"settings.style" = "Application style";
+"style.classic" = "Classic";
+"graph.monitor" = "Open Activity Monitor";
+"monitor.permission_title" = "Select the Activity Monitor section";
+"monitor.permission_body" = "To select CPU, Memory, Disk, Network or GPU History automatically, allow NetMeter in System Settings → Privacy & Security → Accessibility. Without this permission, Activity Monitor still opens.";
+"monitor.open_settings" = "Open System Settings";
+"monitor.just_open" = "Just open";

@@ -24,6 +24,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenu
     var openNetworkItem: NSMenuItem!
     var updates: UpdateController!
     var aboutWindow: NSWindow?
+    var colorSelection: (id: String, component: String)?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -34,6 +35,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenu
         statusItem.button?.title = "↓ 0 B/s  ↑ 0 B/s"
         buildStatusMenu()
         makeResourcePanels()
+        applyGraphAppearance()
         docking.onClose = { [weak self] id in
             UserDefaults.standard.set(false, forKey: "graphEnabled-\(id)")
             self?.graphItems[id]?.state = .off

@@ -90,6 +90,12 @@ GPU monitoring is unavailable when the system does not provide the required data
 
 ## Using the graphs
 
+Right-click a graph → **Color → Graph / Label** to open the native macOS color panel with its eyedropper. Network and disk have separate controls for both lines and their labels; heading colors are configurable too. Colors are saved between launches.
+
+In **General → Application style**, choose **Classic** (dark charts) or **macOS** (follows system light/dark appearance). The change applies immediately to all graphs, including individual CPU cores.
+
+Click the chart area to open Activity Monitor. Selecting its matching category or GPU History requires granting NetMeter **Accessibility** access in System Settings. Without that permission, Activity Monitor opens in its current view. Drag graph windows by their title bars.
+
 | Action | Control |
 |---|---|
 | Show or hide a graph | Menu bar → **Graphs** |

@@ -12,16 +12,25 @@ final class NetworkGraphView: NSView {
     var downColor: NSColor = .systemRed { didSet { needsDisplay = true } }
     var upColor: NSColor = .systemGreen { didSet { needsDisplay = true } }
     override var isOpaque: Bool { true }
+    override func viewDidChangeEffectiveAppearance() { super.viewDidChangeEffectiveAppearance(); needsDisplay = true }
+
+    var graphID = "network"
+    var openMonitor: (() -> Void)?
+    override var mouseDownCanMoveWindow: Bool { false }
+    override func mouseDown(with event: NSEvent) { }
+    override func mouseUp(with event: NSEvent) {
+        if bounds.contains(convert(event.locationInWindow, from: nil)) { openMonitor?() }
+    }
 
     override func draw(_ dirtyRect: NSRect) {
         let bounds = self.bounds
-        NSColor(calibratedRed: 0.07, green: 0.09, blue: 0.13, alpha: 1).setFill()
+        GraphAppearance.background.setFill()
         bounds.fill()
         let plot = NSRect(x: 12, y: 37, width: bounds.width - 24, height: bounds.height - 65)
-        NSColor(calibratedRed: 0.12, green: 0.16, blue: 0.21, alpha: 1).setFill()
+        GraphAppearance.plot.setFill()
         plot.fill()
         if showGrid {
-            NSColor.white.withAlphaComponent(0.12).setStroke()
+            GraphAppearance.grid.setStroke()
             for fraction in [0.25, 0.5, 0.75] {
                 let line = NSBezierPath()
                 let y = plot.minY + plot.height * fraction
@@ -45,11 +54,11 @@ final class NetworkGraphView: NSView {
         }
         let latest = samples.last ?? NetworkSample(down: 0, up: 0)
         if showRates {
-            drawText("↓ \(formatRate(latest.down))", x: 12, y: 10, color: downColor)
-            drawText("↑ \(formatRate(latest.up))", x: bounds.width / 2, y: 10, color: upColor)
+            drawText("↓ \(formatRate(latest.down))", x: 12, y: 10, color: GraphAppearance.color(id: graphID, component: "label1", fallback: .systemRed))
+            drawText("↑ \(formatRate(latest.up))", x: bounds.width / 2, y: 10, color: GraphAppearance.color(id: graphID, component: "label2", fallback: .systemGreen))
         }
         drawText(showMaximum ? "\(interfaceName) · \(L("graph.max", formatRate(scale)))" : interfaceName,
-                 x: 12, y: bounds.height - 23, color: .white)
+                 x: 12, y: bounds.height - 23, color: GraphAppearance.color(id: graphID, component: "title", fallback: GraphAppearance.text))
     }
 
     private func drawText(_ value: String, x: CGFloat, y: CGFloat, color: NSColor) {

@@ -28,6 +28,9 @@ extension AppDelegate {
             item(L("cpu.all_cores"), "cores", checked: resourceViews[id]?.showAllCores == true)
             result.addItem(.separator())
         }
+        result.addItem(graphColorMenu(id: id))
+        item(L("graph.monitor"), "monitor")
+        result.addItem(.separator())
         item(L("graph.grid"), "grid", checked: id == "network" ? graph.showGrid : resourceViews[id]?.showGrid == true)
         item(L("graph.values"), "rates", checked: id == "network" ? graph.showRates : resourceViews[id]?.showRates == true)
         item(L("graph.top"), "top", checked: window.level == .floating)
@@ -36,6 +39,7 @@ extension AppDelegate {
         item(L("graph.compact"), "compact")
         item(L("graph.detach"), "detach")
         result.addItem(.separator())
+        if id != "network" { item(L("settings.title"), "settings") }
         item(L("graph.hide"), "hide")
         return result
     }
@@ -45,6 +49,7 @@ extension AppDelegate {
         let id = command[0]
         guard let window = id == "network" ? panel : resourcePanels[id] else { return }
         switch command[1] {
+        case "monitor": openActivityMonitor(id: id)
         case "settings": showSettings()
         case "cores": toggleAllCores()
         case "grid":

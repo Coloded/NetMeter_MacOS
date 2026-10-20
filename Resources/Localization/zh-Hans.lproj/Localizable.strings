@@ -74,3 +74,19 @@
 "updates.no_build" = "未设置应用构建编号。";
 "updates.source" = "更新来源：GitHub Releases。";
 "updates.automatic" = "每天自动检查更新";
+
+// Graph appearance and Activity Monitor
+"color.menu" = "颜色";
+"color.graph" = "图表";
+"color.label" = "标签";
+"color.choose" = "选择颜色…";
+"color.read" = "读取";
+"color.write" = "写入";
+"color.title" = "标题";
+"settings.style" = "应用样式";
+"style.classic" = "经典";
+"graph.monitor" = "打开活动监视器";
+"monitor.permission_title" = "选择活动监视器类别";
+"monitor.permission_body" = "若要自动选择 CPU、内存、磁盘、网络或 GPU 历史记录，请在系统设置 → 隐私与安全性 → 辅助功能中允许 NetMeter。未授权时仍可打开活动监视器。";
+"monitor.open_settings" = "打开系统设置";
+"monitor.just_open" = "仅打开";

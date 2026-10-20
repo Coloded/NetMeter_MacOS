@@ -74,3 +74,19 @@
 "updates.no_build" = "رقم بناء التطبيق غير محدد.";
 "updates.source" = "مصدر التحديثات: GitHub Releases.";
 "updates.automatic" = "البحث تلقائيًا عن التحديثات يوميًا";
+
+// Graph appearance and Activity Monitor
+"color.menu" = "اللون";
+"color.graph" = "الرسم البياني";
+"color.label" = "التسمية";
+"color.choose" = "اختيار اللون…";
+"color.read" = "قراءة";
+"color.write" = "كتابة";
+"color.title" = "العنوان";
+"settings.style" = "نمط التطبيق";
+"style.classic" = "كلاسيكي";
+"graph.monitor" = "فتح مراقب النشاط";
+"monitor.permission_title" = "اختيار قسم مراقب النشاط";
+"monitor.permission_body" = "لاختيار المعالج أو الذاكرة أو القرص أو الشبكة أو سجل GPU تلقائيًا، اسمح لـ NetMeter في إعدادات النظام ← الخصوصية والأمان ← تسهيلات الاستخدام. بدون الإذن، يفتح مراقب النشاط أيضًا.";
+"monitor.open_settings" = "فتح إعدادات النظام";
+"monitor.just_open" = "فتح فقط";
