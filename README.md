@@ -6,6 +6,10 @@
 
 [English](README.md) · [Русский](README.ru.md)
 
+## [⬇ Download for macOS (.dmg)](https://github.com/Coloded/NetMeter_MacOS/releases/latest/download/NetMeter-stable.dmg)
+
+macOS 13+ · Apple Silicon & Intel · [Release notes](https://github.com/Coloded/NetMeter_MacOS/releases/latest)
+
 A native macOS monitor with separate, always-on-top graphs for network traffic,
 memory, CPU, GPU and system disk activity. Arrange the windows around your work,
 snap them together, or keep only the graphs you need.

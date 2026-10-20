@@ -6,6 +6,10 @@
 
 [English](README.md) · [Русский](README.ru.md)
 
+## [⬇ Скачать для macOS (.dmg)](https://github.com/Coloded/NetMeter_MacOS/releases/latest/download/NetMeter-stable.dmg)
+
+macOS 13+ · Apple Silicon и Intel · [Что нового](https://github.com/Coloded/NetMeter_MacOS/releases/latest)
+
 Нативный монитор macOS с отдельными графиками сети, памяти, CPU, GPU и системного
 диска поверх других окон. Располагайте их рядом с рабочими приложениями,
 склеивайте в группы или оставляйте только нужные показатели.
