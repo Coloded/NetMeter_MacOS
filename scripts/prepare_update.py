@@ -38,7 +38,7 @@ def main():
         artifacts = temporary / "artifacts"
         artifacts.mkdir()
         image = artifacts / "NetMeter-stable.dmg"
-        subprocess.run(["hdiutil", "create", "-volname", "NetMeter", "-srcfolder", str(payload), "-format", "UDZO", str(image)], check=True)
+        subprocess.run(["hdiutil", "create", "-volname", "NetMeter", "-fs", "HFS+", "-srcfolder", str(payload), "-format", "UDZO", str(image)], check=True)
         subprocess.run(["hdiutil", "verify", str(image)], check=True)
         (artifacts / "NetMeter-stable.md").write_text(notes)
         prefix = f'https://github.com/{config["repository"]}/releases/latest/download/'

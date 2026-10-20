@@ -45,7 +45,7 @@ with tempfile.TemporaryDirectory(prefix="traffic-updater-test-") as temporary:
         payload = temporary / "payload"
         copy_bundle(app, payload / "NetMeter.app")
         (payload / "Applications").symlink_to("/Applications")
-        run("hdiutil", "create", "-volname", "Traffic updater test", "-srcfolder", str(payload), "-format", "UDZO", str(archive))
+        run("hdiutil", "create", "-volname", "NetMeter updater test", "-fs", "HFS+", "-srcfolder", str(payload), "-format", "UDZO", str(archive))
         run("hdiutil", "verify", str(archive))
     else:
         run("ditto", "-c", "-k", "--keepParent", str(app), str(archive))
