@@ -102,3 +102,9 @@
 "status.interface" = "الواجهة: %@";
 "status.download" = "التنزيل: %@";
 "status.upload" = "الرفع: %@";
+
+// Negotiated network link speed
+"network.link_unknown" = "سرعة الاتصال غير متاحة";
+"network.link_mbps" = "%@ ميغابت/ث";
+"network.link_gbps" = "%@ غيغابت/ث";
+"network.wifi_tx" = "إرسال %@";

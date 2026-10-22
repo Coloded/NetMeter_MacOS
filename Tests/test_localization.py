@@ -22,7 +22,7 @@ for language, catalog in catalogs.items():
     assert catalog.keys() == base.keys(), f"Missing translations: {language}"
     assert catalog["graph.grid"] == catalog["settings.grid"], f"Inconsistent grid wording: {language}"
     for key, text in catalog.items():
-        if language != "en" and key not in {"app.name", "graph.cpu", "graph.gpu"}:
+        if language != "en" and key not in {"app.name", "graph.cpu", "graph.gpu", "network.wifi_tx"}:
             assert text != base[key], f"Untranslated English text: {language}:{key}"
         assert text.strip(), f"Empty translation: {language}:{key}"
         formats = lambda value: re.findall(r"%(?:\d+\$)?(?:\.\d+)?[@df]", value.replace("%%", ""))

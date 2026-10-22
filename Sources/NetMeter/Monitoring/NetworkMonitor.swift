@@ -67,7 +67,13 @@ enum NetworkDiscovery {
 
     static func displayName(_ name: String) -> String {
         if name.isEmpty { return L("network.offline") }
-        if let type = hardware()[name] { return "\(type) (\(name))" }
+        if let type = hardware()[name] {
+            let base = "\(type) (\(name))"
+            if type == "Ethernet" || type == "Wi-Fi" {
+                return base + " · " + NetworkLinkSpeed.label(interface: name, wifi: type == "Wi-Fi")
+            }
+            return base
+        }
         return isTunnel(name) ? "VPN (\(name))" : name
     }
 }

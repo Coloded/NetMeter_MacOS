@@ -2,6 +2,13 @@ import AppKit
 
 enum RuntimeDiagnostics {
     static func run() {
+            precondition(NetworkLinkSpeed.ethernetRate("media: autoselect (100baseTX <full-duplex>)\nstatus: active") == 100)
+            precondition(NetworkLinkSpeed.ethernetRate("media: autoselect (1000baseT <full-duplex>)\nstatus: active") == 1000)
+            precondition(NetworkLinkSpeed.ethernetRate("media: autoselect (2.5Gbase-T <full-duplex>)\nstatus: active") == 2500)
+            precondition(NetworkLinkSpeed.ethernetRate("media: 10Gbase-T <full-duplex>\nstatus: active") == 10000)
+            precondition(NetworkLinkSpeed.ethernetRate("media: autoselect (1000baseT)\nstatus: inactive") == nil)
+            precondition(NetworkLinkSpeed.ethernetRate("media: autoselect\nstatus: active") == nil)
+            precondition(formatRate(1048576) == "1.0 MiB/s")
             let routing = """
             Destination Gateway Flags Netif Expire
             default 198.18.0.1 UGSc utun4
@@ -36,6 +43,8 @@ enum RuntimeDiagnostics {
                 "primaryInterface": defaultInterface(),
                 "activeInterfaces": activeInterfaces(),
                 "networkRoutingFixtures": true,
+                "negotiatedLinkFixtures": true,
+                "networkLink": NetworkDiscovery.displayName(defaultInterface()),
                 "independentColorPersistence": true,
                 "languages": translations,
                 "updaterState": UpdateController.configurationIssue(Bundle.main.infoDictionary ?? [:]) ?? "configured",

@@ -79,7 +79,7 @@ extension AppDelegate {
         check(L("settings.maximum"), key: "maximum", initial: true, y: 155, in: graphTab, tag: 4)
         label(L("settings.scale"), x: 24, y: 112, in: graphTab)
         let scale = NSPopUpButton(frame: NSRect(x: 24, y: 72, width: 230, height: 30))
-        scale.addItems(withTitles: [L("settings.auto"), "1 MB/s", "10 MB/s", "100 MB/s", "1 GB/s"])
+        scale.addItems(withTitles: [L("settings.auto"), "1 MiB/s", "10 MiB/s", "100 MiB/s", "1 GiB/s"])
         scale.selectItem(at: [0, 1, 10, 100, 1024].firstIndex(of: Int(graph.fixedScale / 1048576)) ?? 0)
         scale.target = self
         scale.action = #selector(changeScale(_:))

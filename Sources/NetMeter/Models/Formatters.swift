@@ -1,7 +1,7 @@
 import Foundation
 
 func formatRate(_ bytesPerSecond: Double) -> String {
-    let units = ["B/s", "KB/s", "MB/s", "GB/s"]
+    let units = ["B/s", "KiB/s", "MiB/s", "GiB/s"]
     var value = max(0, bytesPerSecond)
     var index = 0
     while value >= 1024 && index < units.count - 1 { value /= 1024; index += 1 }

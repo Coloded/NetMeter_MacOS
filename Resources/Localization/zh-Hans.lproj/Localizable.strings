@@ -102,3 +102,9 @@
 "status.interface" = "接口：%@";
 "status.download" = "下载：%@";
 "status.upload" = "上传：%@";
+
+// Negotiated network link speed
+"network.link_unknown" = "连接速率不可用";
+"network.link_mbps" = "%@ 兆比特/秒";
+"network.link_gbps" = "%@ 吉比特/秒";
+"network.wifi_tx" = "发送 %@";

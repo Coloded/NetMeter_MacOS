@@ -94,6 +94,8 @@ GPU monitoring is unavailable when the system does not provide the required data
 
 ## Using the graphs
 
+Interface names include the current negotiated Ethernet speed or Wi-Fi TX PHY rate, refreshed every five seconds. Wi-Fi TX is the access-point transmit link rate, not file-transfer throughput. If macOS does not supply the rate, NetMeter explicitly reports it as unavailable. Traffic uses binary KiB/s, MiB/s and GiB/s; connection speeds use decimal Mbit/s and Gbit/s.
+
 The menu-bar indicator uses two rows: download above upload, with full speed units. Hover over it to see the monitored interface, current rates and traffic totals for this session and all time.
 
 Enable **General → Launch at login** to start NetMeter when you sign in to macOS. The checkbox reads the actual macOS Login Items state; if approval is required, use the System Settings button. Install NetMeter in Applications before enabling it.

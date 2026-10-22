@@ -102,3 +102,9 @@
 "status.interface" = "Interface: %@";
 "status.download" = "Download: %@";
 "status.upload" = "Upload: %@";
+
+// Negotiated network link speed
+"network.link_unknown" = "link speed unavailable";
+"network.link_mbps" = "%@ Mbit/s";
+"network.link_gbps" = "%@ Gbit/s";
+"network.wifi_tx" = "TX %@";

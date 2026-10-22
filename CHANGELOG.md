@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.3
+
+- Show the negotiated Ethernet link rate or Wi-Fi TX PHY rate beside the real interface name.
+- Refresh connection rates every five seconds in graph headers, interface menus and hover details.
+- Explicit unavailable state when macOS does not report a connection rate; no guessed hardware speed.
+- Separate network scale maximum from the interface header to keep link details readable.
+- Correct binary traffic-rate units to KiB/s, MiB/s and GiB/s.
+
 ## 1.1.2
 
 - Compact two-row download/upload display in the menu bar with full speed units.

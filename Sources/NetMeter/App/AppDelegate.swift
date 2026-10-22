@@ -61,6 +61,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenu
                 graph.interfaceName = NetworkDiscovery.displayName(current)
             }
         }
+        graph.interfaceName = NetworkDiscovery.displayName(selectedInterface)
         let now = Date()
         let value = counters()[selectedInterface]
         var sample = NetworkSample(down: 0, up: 0)
