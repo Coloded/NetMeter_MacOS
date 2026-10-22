@@ -1,10 +1,10 @@
 {
-  "tag": "v1.1.3",
-  "commit": "3fad95bf4d6fe9921bf8b8778417c2eb27f79be2",
-  "build": 5,
+  "tag": "v1.1.4",
+  "commit": "9e888efb204d8efac348c9db10d6f2253571457c",
+  "build": 6,
   "sha256": {
-    "NetMeter-stable.dmg": "b22eadea00bed79d7c24c0521064ff25f0e34dada195feed2d534b59e982cef1",
-    "appcast.xml": "ab84fd512f6f5240769bcb61e8be45aace72c6dd7d50e3d990f22f010b27c5ea",
-    "SHA256SUMS.txt": "c795fba228f9a99bf1918e5949361864ec3aabe8378f1d9d8fa665eb3564727d"
+    "NetMeter-stable.dmg": "16ea84fd6d2a0d4a39dee3c51945201518fd470e7512068ea992551acef84925",
+    "appcast.xml": "9773626bb8a43620383222ffeff87973d0d0dd0382592b1f9f53b39932e9969c",
+    "SHA256SUMS.txt": "6a0dc8bea8b599d091b6cb19d58cc2d0a8630918ff5f282b785ead175aad3c9f"
   }
 }
