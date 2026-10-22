@@ -1,21 +1,21 @@
-# NetMeter 1.1.3
+# NetMeter 1.1.4
 
 ## English
 
-- Network interface labels now include the current negotiated Ethernet speed or Wi-Fi TX PHY rate, for example Ethernet (en0) · 1 Gbit/s. Real interface names are discovered automatically.
-- Connection rates refresh every five seconds in graph headers, interface menus and the menu-bar tooltip. Unavailable rates are stated explicitly.
-- Wi-Fi TX is the transmit link rate to the access point, not actual file-transfer throughput.
-- The graph scale maximum has its own header row. Binary traffic units are correctly labelled KiB/s, MiB/s and GiB/s.
-- All new labels translated into English, Russian, Arabic and Simplified Chinese.
+- Network heading is back on one line: interface, link speed and scale maximum.
+- Settings → Fonts: select family and size separately for headings and value labels with the native macOS font panel. Includes automatic heading fitting and font reset.
+- Settings → Units: independent automatic or fixed units for current speed, scale maximum and total traffic. Supports bit/s through Gbit/s, decimal B/KB/MB/GB and binary KiB/MiB/GiB.
+- Font and unit preferences persist between launches. Disk read/write speeds remain byte-based.
+- New settings translated into English, Russian, Arabic and Simplified Chinese.
 
 Requires macOS 13 or later; Universal for Apple Silicon and Intel. Developer ID notarization is not configured.
 
 ## Русский
 
-- Рядом с именем интерфейса отображается текущая согласованная скорость Ethernet или TX-скорость радиосоединения Wi-Fi. Например: Ethernet (en0) · 1 Гбит/с. Имена интерфейсов определяются автоматически.
-- Скорость соединения обновляется каждые пять секунд в заголовке графика, списке интерфейсов и подсказке строки меню. Если данных нет, это явно указано.
-- TX для Wi-Fi — скорость радиосоединения на передачу к точке доступа, а не фактическая скорость копирования файлов.
-- Максимум шкалы вынесен на отдельную строку. Исправлены обозначения двоичных единиц трафика: KiB/s, MiB/s и GiB/s.
-- Все новые подписи переведены на четыре языка.
+- Заголовок сети в одну строку: интерфейс, скорость соединения и максимум шкалы.
+- Настройки → Шрифты: гарнитура и размер отдельно для заголовков и значений через системную панель macOS. Есть подгонка заголовка под ширину окна и сброс шрифтов.
+- Настройки → Единицы: независимый выбор для текущей скорости, максимума и итогового трафика. Автоматические и фиксированные единицы: bit/s–Gbit/s, десятичные B/KB/MB/GB и двоичные KiB/MiB/GiB.
+- Шрифты и единицы сохраняются после перезапуска. Скорости чтения и записи диска остаются в байтовых единицах.
+- Новые настройки переведены на четыре языка.
 
 Требуется macOS 13 или новее; Universal для Apple Silicon и Intel. Notarization через Developer ID не настроена.

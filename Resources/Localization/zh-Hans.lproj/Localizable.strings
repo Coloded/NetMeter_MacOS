@@ -108,3 +108,17 @@
 "network.link_mbps" = "%@ 兆比特/秒";
 "network.link_gbps" = "%@ 吉比特/秒";
 "network.wifi_tx" = "发送 %@";
+
+// Fonts and network speed units
+"fonts.title" = "字体";
+"fonts.heading" = "标题／最大值";
+"fonts.values" = "数值／标签";
+"fonts.auto_fit" = "根据窗口宽度调整标题字号";
+"fonts.reset" = "重置字体";
+"units.title" = "单位";
+"units.auto_binary" = "自动 · 字节（1024）";
+"units.auto_decimal" = "自动 · 字节（1000）";
+"units.auto_bits" = "自动 · 比特（1000）";
+"units.current" = "当前速度";
+"units.maximum" = "刻度最大值";
+"units.totals" = "流量总计";

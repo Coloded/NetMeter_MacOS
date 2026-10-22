@@ -44,7 +44,7 @@ extension ResourceGraphView {
             let value = currentCores?.indices.contains(index) == true ? String(format: " %.0f%%", currentCores![index]) : " —"
             let label = L("cpu.core", index + 1) + (showRates ? value : "")
             (label as NSString).draw(at: NSPoint(x: x, y: y + cellHeight - 15), withAttributes: [
-                .font: NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .medium), .foregroundColor: GraphAppearance.color(id: graphID, component: "label1", fallback: GraphAppearance.text)
+                .font: GraphFonts.font("values", fallbackSize: 10), .foregroundColor: GraphAppearance.color(id: graphID, component: "label1", fallback: GraphAppearance.text)
             ])
         }
     }

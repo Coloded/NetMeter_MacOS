@@ -135,7 +135,7 @@ final class SystemMetrics {
         let reading = Double(read - old.0) / (now - old.2)
         let writing = Double(write - old.1) / (now - old.2)
         return ResourceReading(first: reading, second: writing, header: diskName,
-                               footer: L("disk.read", formatRate(reading)), secondary: L("disk.write", formatRate(writing)))
+                               footer: L("disk.read", formatRate(reading, unit: "auto_binary")), secondary: L("disk.write", formatRate(writing, unit: "auto_binary")))
     }
 }
 

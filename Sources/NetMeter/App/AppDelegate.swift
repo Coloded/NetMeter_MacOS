@@ -13,6 +13,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSMenu
     var refreshCount = 0
     var loginAtStartupButton: NSButton?
     var loginAtStartupApprovalButton: NSButton?
+    var graphFontButtons: [String: NSButton] = [:]
+    var selectedFontRole = "values"
     var settingsWindow: NSWindow?
     var sessionDown: UInt64 = 0
     var sessionUp: UInt64 = 0

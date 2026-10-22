@@ -108,3 +108,17 @@
 "network.link_mbps" = "%@ ميغابت/ث";
 "network.link_gbps" = "%@ غيغابت/ث";
 "network.wifi_tx" = "إرسال %@";
+
+// Fonts and network speed units
+"fonts.title" = "الخطوط";
+"fonts.heading" = "العنوان / الحد الأقصى";
+"fonts.values" = "القيم / التسميات";
+"fonts.auto_fit" = "ملاءمة خط العنوان مع عرض النافذة";
+"fonts.reset" = "إعادة تعيين الخطوط";
+"units.title" = "الوحدات";
+"units.auto_binary" = "تلقائي · بايت (1024)";
+"units.auto_decimal" = "تلقائي · بايت (1000)";
+"units.auto_bits" = "تلقائي · بت (1000)";
+"units.current" = "السرعة الحالية";
+"units.maximum" = "الحد الأقصى للمقياس";
+"units.totals" = "إجمالي البيانات";

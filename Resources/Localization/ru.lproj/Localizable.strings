@@ -108,3 +108,17 @@
 "network.link_mbps" = "%@ Мбит/с";
 "network.link_gbps" = "%@ Гбит/с";
 "network.wifi_tx" = "TX %@";
+
+// Fonts and network speed units
+"fonts.title" = "Шрифты";
+"fonts.heading" = "Заголовок / максимум";
+"fonts.values" = "Значения / подписи";
+"fonts.auto_fit" = "Подгонять заголовок под ширину окна";
+"fonts.reset" = "Сбросить шрифты";
+"units.title" = "Единицы";
+"units.auto_binary" = "Авто · байты (1024)";
+"units.auto_decimal" = "Авто · байты (1000)";
+"units.auto_bits" = "Авто · биты (1000)";
+"units.current" = "Текущая скорость";
+"units.maximum" = "Максимум шкалы";
+"units.totals" = "Всего трафика";

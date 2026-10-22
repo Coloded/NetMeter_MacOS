@@ -26,7 +26,7 @@ final class NetworkGraphView: NSView {
         let bounds = self.bounds
         GraphAppearance.background.setFill()
         bounds.fill()
-        let plot = NSRect(x: 12, y: 37, width: bounds.width - 24, height: bounds.height - (showMaximum ? 80 : 65))
+        let plot = NSRect(x: 12, y: 37, width: bounds.width - 24, height: bounds.height - 65)
         GraphAppearance.plot.setFill()
         plot.fill()
         if showGrid {
@@ -58,19 +58,29 @@ final class NetworkGraphView: NSView {
             drawText("↑ \(formatRate(latest.up))", x: bounds.width / 2, y: 10, color: GraphAppearance.color(id: graphID, component: "label2", fallback: .systemGreen))
         }
         let titleColor = GraphAppearance.color(id: graphID, component: "title", fallback: GraphAppearance.text)
-        let header = NSAttributedString(string: interfaceName, attributes: [.foregroundColor: titleColor, .font: NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .medium)])
+        let title = showMaximum ? "\(interfaceName) · \(L("graph.max", formatRate(scale, unit: UserDefaults.standard.string(forKey: "maximumRateUnit") ?? "auto_binary")))" : interfaceName
+        let availableWidth = max(bounds.width - 24, 1)
+        let selectedFont = GraphFonts.font("heading", fallbackSize: 11)
+        var fontSize = selectedFont.pointSize
+        while GraphFonts.autoFit && fontSize > 8 {
+            let font = NSFont(descriptor: selectedFont.fontDescriptor, size: fontSize) ?? selectedFont
+            if (title as NSString).size(withAttributes: [.font: font]).width <= availableWidth { break }
+            fontSize -= 0.5
+        }
         let paragraph = NSMutableParagraphStyle()
         paragraph.lineBreakMode = .byTruncatingTail
-        let fitted = NSMutableAttributedString(attributedString: header)
-        fitted.addAttribute(.paragraphStyle, value: paragraph, range: NSRange(location: 0, length: fitted.length))
-        fitted.draw(in: NSRect(x: 12, y: bounds.height - 25, width: bounds.width - 24, height: 17))
-        if showMaximum { drawText(L("graph.max", formatRate(scale)), x: 12, y: bounds.height - 40, color: titleColor) }
+        let header = NSAttributedString(string: title, attributes: [
+            .foregroundColor: titleColor,
+            .font: NSFont(descriptor: selectedFont.fontDescriptor, size: fontSize) ?? selectedFont,
+            .paragraphStyle: paragraph
+        ])
+        header.draw(in: NSRect(x: 12, y: bounds.height - 25, width: availableWidth, height: 17))
     }
 
     private func drawText(_ value: String, x: CGFloat, y: CGFloat, color: NSColor) {
         (value as NSString).draw(at: NSPoint(x: x, y: y), withAttributes: [
             .foregroundColor: color,
-            .font: NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
+            .font: GraphFonts.font("values", fallbackSize: 12)
         ])
     }
 }

@@ -74,9 +74,9 @@ final class ResourceGraphView: NSView {
             lineColor.setStroke()
             path.stroke()
         }
-        let font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .medium)
+        let font = GraphFonts.font("values", fallbackSize: 11)
         func text(_ value: String, x: CGFloat, y: CGFloat, color: NSColor) {
-            (value as NSString).draw(at: NSPoint(x: x, y: y), withAttributes: [.font: font, .foregroundColor: color])
+            (value as NSString).draw(at: NSPoint(x: x, y: y), withAttributes: [.font: y == bounds.height - 23 ? GraphFonts.font("heading", fallbackSize: 11) : font, .foregroundColor: color])
         }
         text(reading?.header ?? L("graph.no_sensor"), x: 12, y: bounds.height - 23, color: GraphAppearance.color(id: graphID, component: "title", fallback: GraphAppearance.text))
         if showRates {

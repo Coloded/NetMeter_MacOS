@@ -85,6 +85,26 @@ extension AppDelegate {
         scale.action = #selector(changeScale(_:))
         graphTab.addSubview(scale)
 
+        let unitTab = tab(L("units.title"))
+        for (index, entry) in [("rateUnit", "units.current"), ("maximumRateUnit", "units.maximum"), ("totalUnit", "units.totals")].enumerated() {
+            let y = CGFloat(245 - index * 70)
+            label(L10n.text(entry.1), x: 24, y: y, width: 150, in: unitTab)
+            let popup = NSPopUpButton(frame: NSRect(x: 190, y: y - 5, width: 350, height: 30))
+            popup.identifier = NSUserInterfaceItemIdentifier(entry.0)
+            for (value, title) in rateUnitChoices {
+                let display = title.hasPrefix("units.") ? L10n.text(title) : entry.0 == "totalUnit" ? title.replacingOccurrences(of: "/s", with: "") : title
+                popup.addItem(withTitle: display)
+                popup.lastItem?.representedObject = value
+            }
+            let preference = UserDefaults.standard.string(forKey: entry.0) ?? "auto_binary"
+            popup.selectItem(at: rateUnitChoices.firstIndex { $0.0 == preference } ?? 0)
+            popup.target = self
+            popup.action = #selector(changeRateUnit(_:))
+            unitTab.addSubview(popup)
+        }
+        graphFontButtons = [:]
+        addFontControls(to: tab(L("fonts.title")))
+
         let colors = tab(L("settings.colors"))
         label(L("settings.download"), x: 24, y: 224, width: 150, in: colors)
         let downWell = NSColorWell(frame: NSRect(x: 190, y: 218, width: 90, height: 32))
@@ -156,7 +176,7 @@ extension AppDelegate {
 
     func updateTotalsLabel() {
         let defaults = UserDefaults.standard
-        func total(_ bytes: Double) -> String { formatRate(bytes).replacingOccurrences(of: "/s", with: "") }
+        func total(_ bytes: Double) -> String { formatByteCount(bytes) }
         totalsLabel?.stringValue = L("settings.session", total(Double(sessionDown)), total(Double(sessionUp))) + "\n" + L("settings.all_time", total(defaults.double(forKey: "totalDown")), total(defaults.double(forKey: "totalUp")))
     }
 

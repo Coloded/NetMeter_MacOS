@@ -108,3 +108,17 @@
 "network.link_mbps" = "%@ Mbit/s";
 "network.link_gbps" = "%@ Gbit/s";
 "network.wifi_tx" = "TX %@";
+
+// Fonts and network speed units
+"fonts.title" = "Fonts";
+"fonts.heading" = "Heading / maximum";
+"fonts.values" = "Values / labels";
+"fonts.auto_fit" = "Fit heading text to window width";
+"fonts.reset" = "Reset fonts";
+"units.title" = "Units";
+"units.auto_binary" = "Automatic · bytes (1024)";
+"units.auto_decimal" = "Automatic · bytes (1000)";
+"units.auto_bits" = "Automatic · bits (1000)";
+"units.current" = "Current speed";
+"units.maximum" = "Scale maximum";
+"units.totals" = "Total traffic";

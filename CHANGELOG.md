@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.4
+
+- Single-line network heading with interface, link speed and scale maximum.
+- Separate heading and value fonts using the native macOS font panel, with automatic heading fitting and font reset.
+- Independent units for current network speed, scale maximum and traffic totals: bits or bytes, automatic or fixed, decimal or binary.
+- Saved font and unit preferences; disk rates remain byte-based.
+- New settings translated into all four interface languages.
+
 ## 1.1.3
 
 - Show the negotiated Ethernet link rate or Wi-Fi TX PHY rate beside the real interface name.

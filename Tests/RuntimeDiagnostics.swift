@@ -8,7 +8,11 @@ enum RuntimeDiagnostics {
             precondition(NetworkLinkSpeed.ethernetRate("media: 10Gbase-T <full-duplex>\nstatus: active") == 10000)
             precondition(NetworkLinkSpeed.ethernetRate("media: autoselect (1000baseT)\nstatus: inactive") == nil)
             precondition(NetworkLinkSpeed.ethernetRate("media: autoselect\nstatus: active") == nil)
-            precondition(formatRate(1048576) == "1.0 MiB/s")
+            precondition(formatRate(1048576, unit: "auto_binary") == "1.0 MiB/s")
+            precondition(formatRate(125000, unit: "Mbit/s") == "1.0 Mbit/s")
+            precondition(formatRate(1000000, unit: "MB/s") == "1.0 MB/s")
+            precondition(formatRate(125000000, unit: "auto_bits") == "1.0 Gbit/s")
+            precondition(formatByteCount(1048576, unit: "auto_binary") == "1.0 MiB")
             let routing = """
             Destination Gateway Flags Netif Expire
             default 198.18.0.1 UGSc utun4

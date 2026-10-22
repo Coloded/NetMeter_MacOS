@@ -19,7 +19,7 @@ extension AppDelegate {
         button.image = image
         button.imagePosition = .imageOnly
         let defaults = UserDefaults.standard
-        func total(_ bytes: Double) -> String { formatRate(bytes).replacingOccurrences(of: "/s", with: "") }
+        func total(_ bytes: Double) -> String { formatByteCount(bytes) }
         let details = [
             L("status.interface", NetworkDiscovery.displayName(selectedInterface)),
             L("status.download", formatRate(sample.down)),
