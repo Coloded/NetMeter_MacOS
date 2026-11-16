@@ -70,3 +70,7 @@ Root-reported interactive results (QA did not operate these GUI checks): atomic 
 Root also found stale General network summary when created before first snapshot. Implementation retained the label and refreshes it after accepted snapshots, presentation changes and settings creation/show. QA static inspection confirms these call paths, latest snapshot interface usage, full tooltip and no sampling tick in summary refresh. Release DMG contains this fix, matching staging as verified above. No independent GUI replay of this label update was performed.
 
 No publication performed by QA. Earlier sections retain historical staged 1.1.4 checks; this section is the current 1.1.5/build 7 release acceptance.
+
+## Hosted CI runner correction
+
+The first hosted source check for release source commit 20c4ede was cancelled before any test step: GitHub reported `macos-14-arm64-us-default is not supported`. GitHub retired macOS 14 runners on 2026-11-02. The source workflow was moved to supported macos-15; application Sources, Resources, version and prepared signed release remain unchanged. The original release tag is preserved. Local regression and signed artifact acceptance above are not claims that the cancelled hosted run passed.
