@@ -1,10 +1,10 @@
 import AppKit
 
 extension AppDelegate {
-    func updateStatusRates(_ sample: NetworkSample) {
+    func updateStatusRates(_ sample: NetworkSample?) {
         guard let button = statusItem.button else { return }
-        let down = "↓ \(formatRate(sample.down))"
-        let up = "↑ \(formatRate(sample.up))"
+        let down = "↓ " + (sample.flatMap { $0.downAvailable ? formatRate($0.down) : nil } ?? "—")
+        let up = "↑ " + (sample.flatMap { $0.upAvailable ? formatRate($0.up) : nil } ?? "—")
         let font = NSFont.monospacedDigitSystemFont(ofSize: 9, weight: .medium)
         let attributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: NSColor.black]
         let width = ceil(max((down as NSString).size(withAttributes: attributes).width,
@@ -22,8 +22,8 @@ extension AppDelegate {
         func total(_ bytes: Double) -> String { formatByteCount(bytes) }
         let details = [
             L("status.interface", NetworkDiscovery.displayName(selectedInterface)),
-            L("status.download", formatRate(sample.down)),
-            L("status.upload", formatRate(sample.up)),
+            L("status.download", sample.flatMap { $0.downAvailable ? formatRate($0.down) : nil } ?? "—"),
+            L("status.upload", sample.flatMap { $0.upAvailable ? formatRate($0.up) : nil } ?? "—"),
             L("settings.session", total(Double(sessionDown)), total(Double(sessionUp))),
             L("settings.all_time", total(defaults.double(forKey: "totalDown")), total(defaults.double(forKey: "totalUp")))
         ].joined(separator: "\n")

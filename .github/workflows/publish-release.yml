@@ -48,7 +48,7 @@ jobs:
           ns = '{http://www.andymatuschak.org/xml-namespaces/sparkle}'
           item = ET.parse(directory / 'appcast.xml').find('./channel/item')
           enclosure = item.find('enclosure')
-          assert enclosure.get('url') == 'https://github.com/' + os.environ['RELEASE_REPOSITORY'] + '/releases/latest/download/NetMeter-stable.dmg'
+          assert enclosure.get('url') == 'https://github.com/' + os.environ['RELEASE_REPOSITORY'] + '/releases/download/' + tag + '/NetMeter-stable.dmg'
           assert int(enclosure.get('length')) == (directory / 'NetMeter-stable.dmg').stat().st_size
           assert enclosure.get(ns + 'edSignature'), 'Missing archive signature'
           assert (enclosure.get(ns + 'shortVersionString') or item.findtext(ns + 'shortVersionString')) == tag[1:]

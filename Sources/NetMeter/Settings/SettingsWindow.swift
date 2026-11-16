@@ -4,8 +4,19 @@ extension AppDelegate {
     @objc func showSettings() {
         if settingsWindow == nil { makeSettingsWindow() }
         refreshLoginAtStartup()
+        refreshNetworkSummary()
         settingsWindow?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+    }
+
+    func refreshNetworkSummary() {
+        guard let field = networkSummaryLabel else { return }
+        // Both discovery and link-speed accessors are cache-only on main.
+        // Re-render the latest accepted snapshot; never start a sampling tick here.
+        let current = lastSnapshot?.interface ?? selectedInterface
+        let text = L("network.interface_summary", NetworkDiscovery.displayName(defaultInterface()), NetworkDiscovery.displayName(current))
+        field.stringValue = text
+        field.toolTip = text
     }
 
     @discardableResult func label(_ text: String, x: CGFloat, y: CGFloat, width: CGFloat? = nil, in parent: NSView) -> NSTextField {
@@ -43,7 +54,9 @@ extension AppDelegate {
         }
 
         let general = tab(L("settings.general"))
-        label(L("network.interface_summary", NetworkDiscovery.displayName(defaultInterface()), NetworkDiscovery.displayName(selectedInterface)), x: 24, y: 228, in: general)
+        networkSummaryLabel = label("", x: 24, y: 228, in: general)
+        networkSummaryLabel?.lineBreakMode = .byTruncatingTail
+        refreshNetworkSummary()
         label(L("network.select_hint"), x: 24, y: 202, in: general)
         check(L("settings.top_all"), key: "alwaysOnTop", initial: true, y: 160, in: general, tag: 1)
         label(L("settings.opacity"), x: 24, y: 118, in: general)
@@ -84,6 +97,10 @@ extension AppDelegate {
         scale.target = self
         scale.action = #selector(changeScale(_:))
         graphTab.addSubview(scale)
+
+        let access = NSButton(title: L("monitor.help"), target: self, action: #selector(showMonitorAccessHelp))
+        access.frame = NSRect(x: 24, y: 20, width: 350, height: 30)
+        graphTab.addSubview(access)
 
         let unitTab = tab(L("units.title"))
         for (index, entry) in [("rateUnit", "units.current"), ("maximumRateUnit", "units.maximum"), ("totalUnit", "units.totals")].enumerated() {
@@ -138,17 +155,20 @@ extension AppDelegate {
     @objc func changeCheck(_ sender: NSButton) {
         let enabled = sender.state == .on
         switch sender.tag {
-        case 1: UserDefaults.standard.set(enabled, forKey: "alwaysOnTop"); panel.level = enabled ? .floating : .normal
-        case 2: UserDefaults.standard.set(enabled, forKey: "grid"); graph.showGrid = enabled
-        case 3: UserDefaults.standard.set(enabled, forKey: "rates"); graph.showRates = enabled
-        case 4: UserDefaults.standard.set(enabled, forKey: "maximum"); graph.showMaximum = enabled
+        case 1:
+            settings.set(enabled, for: .top)
+            panel.level = enabled ? .floating : .normal
+            for window in resourcePanels.values { window.level = panel.level }
+        case 2:
+            settings.set(enabled, for: .grid)
+            graph.showGrid = enabled
+            for view in resourceViews.values { view.showGrid = enabled; view.needsDisplay = true }
+        case 3:
+            settings.set(enabled, for: .rates)
+            graph.showRates = enabled
+            for view in resourceViews.values { view.showRates = enabled; view.needsDisplay = true }
+        case 4: settings.defaults.set(enabled, forKey: "maximum"); graph.showMaximum = enabled
         default: break
-        }
-        for window in resourcePanels.values { window.level = panel.level }
-        for view in resourceViews.values {
-            view.showGrid = graph.showGrid
-            view.showRates = graph.showRates
-            view.needsDisplay = true
         }
     }
 

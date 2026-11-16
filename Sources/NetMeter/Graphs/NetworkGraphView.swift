@@ -3,6 +3,7 @@ import AppKit
 final class NetworkGraphView: NSView {
     var contextMenuProvider: (() -> NSMenu)?
     override func menu(for event: NSEvent) -> NSMenu? { contextMenuProvider?() ?? super.menu(for: event) }
+    var isNetworkAvailable = false { didSet { needsDisplay = true } }
     var samples: [NetworkSample] = [] { didSet { needsDisplay = true } }
     var interfaceName = "" { didSet { needsDisplay = true } }
     var showGrid = true { didSet { needsDisplay = true } }
@@ -26,7 +27,10 @@ final class NetworkGraphView: NSView {
         let bounds = self.bounds
         GraphAppearance.background.setFill()
         bounds.fill()
-        let plot = NSRect(x: 12, y: 37, width: bounds.width - 24, height: bounds.height - 65)
+        let headingHeight = GraphTextLayout.rowHeight("heading", fallback: 11, availableHeight: bounds.height)
+        let valueHeight = GraphTextLayout.rowHeight("values", fallback: 12, availableHeight: bounds.height)
+        let footerHeight = showRates ? valueHeight + 12 : 8
+        let plot = NSRect(x: 12, y: footerHeight, width: max(bounds.width - 24, 1), height: max(bounds.height - footerHeight - headingHeight - 18, 1))
         GraphAppearance.plot.setFill()
         plot.fill()
         if showGrid {
@@ -40,13 +44,15 @@ final class NetworkGraphView: NSView {
             }
         }
         let scale = fixedScale > 0 ? fixedScale : max(samples.map { max($0.down, $0.up) }.max() ?? 0, 1024)
-        for (color, value) in [(downColor, { (s: NetworkSample) in s.down }), (upColor, { (s: NetworkSample) in s.up })] {
+        for (color, value) in [(downColor, { (s: NetworkSample) in s.downAvailable ? s.down : Double.nan }), (upColor, { (s: NetworkSample) in s.upAvailable ? s.up : Double.nan })] {
             let path = NSBezierPath()
             path.lineWidth = 2
+            var started = false
             for (index, sample) in samples.enumerated() {
+                guard value(sample).isFinite else { started = false; continue }
                 let x = plot.maxX - CGFloat(samples.count - 1 - index) * plot.width / 59
                 let y = plot.minY + CGFloat(min(value(sample) / scale, 1)) * plot.height
-                if index == 0 { path.move(to: NSPoint(x: x, y: y)) }
+                if !started { path.move(to: NSPoint(x: x, y: y)); started = true }
                 else { path.line(to: NSPoint(x: x, y: y)) }
             }
             color.setStroke()
@@ -54,34 +60,12 @@ final class NetworkGraphView: NSView {
         }
         let latest = samples.last ?? NetworkSample(down: 0, up: 0)
         if showRates {
-            drawText("↓ \(formatRate(latest.down))", x: 12, y: 10, color: GraphAppearance.color(id: graphID, component: "label1", fallback: .systemRed))
-            drawText("↑ \(formatRate(latest.up))", x: bounds.width / 2, y: 10, color: GraphAppearance.color(id: graphID, component: "label2", fallback: .systemGreen))
+            GraphTextLayout.draw(isNetworkAvailable && latest.downAvailable ? "↓ \(formatRate(latest.down))" : "↓ —", rect: NSRect(x: 12, y: 6, width: bounds.width / 2 - 18, height: valueHeight), role: "values", fallback: 12, color: GraphAppearance.color(id: graphID, component: "label1", fallback: .systemRed))
+            GraphTextLayout.draw(isNetworkAvailable && latest.upAvailable ? "↑ \(formatRate(latest.up))" : "↑ —", rect: NSRect(x: bounds.width / 2 + 6, y: 6, width: bounds.width / 2 - 18, height: valueHeight), role: "values", fallback: 12, color: GraphAppearance.color(id: graphID, component: "label2", fallback: .systemGreen))
         }
         let titleColor = GraphAppearance.color(id: graphID, component: "title", fallback: GraphAppearance.text)
         let title = showMaximum ? "\(interfaceName) · \(L("graph.max", formatRate(scale, unit: UserDefaults.standard.string(forKey: "maximumRateUnit") ?? "auto_binary")))" : interfaceName
-        let availableWidth = max(bounds.width - 24, 1)
-        let selectedFont = GraphFonts.font("heading", fallbackSize: 11)
-        var fontSize = selectedFont.pointSize
-        while GraphFonts.autoFit && fontSize > 8 {
-            let font = NSFont(descriptor: selectedFont.fontDescriptor, size: fontSize) ?? selectedFont
-            if (title as NSString).size(withAttributes: [.font: font]).width <= availableWidth { break }
-            fontSize -= 0.5
-        }
-        let paragraph = NSMutableParagraphStyle()
-        paragraph.lineBreakMode = .byTruncatingTail
-        let header = NSAttributedString(string: title, attributes: [
-            .foregroundColor: titleColor,
-            .font: NSFont(descriptor: selectedFont.fontDescriptor, size: fontSize) ?? selectedFont,
-            .paragraphStyle: paragraph
-        ])
-        header.draw(in: NSRect(x: 12, y: bounds.height - 25, width: availableWidth, height: 17))
-    }
-
-    private func drawText(_ value: String, x: CGFloat, y: CGFloat, color: NSColor) {
-        (value as NSString).draw(at: NSPoint(x: x, y: y), withAttributes: [
-            .foregroundColor: color,
-            .font: GraphFonts.font("values", fallbackSize: 12)
-        ])
+        toolTip = title
+        GraphTextLayout.draw(title, rect: NSRect(x: 12, y: bounds.height - headingHeight - 8, width: bounds.width - 24, height: headingHeight), role: "heading", fallback: 11, color: titleColor)
     }
 }
-

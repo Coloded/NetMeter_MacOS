@@ -30,6 +30,16 @@ extension AppDelegate {
             view.color = GraphAppearance.color(id: id, component: "line1", fallback: view.color)
             view.needsDisplay = true
         }
+        if let content = settingsWindow?.contentView {
+            func sync(_ view: NSView) {
+                if let well = view as? NSColorWell {
+                    let color = well.tag == 1 ? graph.downColor : graph.upColor
+                    if !well.color.isEqual(color) { well.deactivate(); well.color = color }
+                }
+                view.subviews.forEach(sync)
+            }
+            sync(content)
+        }
         graph.needsDisplay = true
     }
 

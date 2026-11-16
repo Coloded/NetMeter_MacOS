@@ -3,11 +3,19 @@ import Darwin
 import SystemConfiguration
 
 enum NetworkDiscovery {
+    private static let lock = NSLock()
+    private static var knownHardware: [String: String] = [:]
+    private static var knownPrimary = ""
+    private static var knownActive: [String] = []
+    static func cachedActive() -> [String] { lock.lock(); defer { lock.unlock() }; return knownActive }
+
     static func isTunnel(_ name: String) -> Bool {
         ["utun", "tun", "tap", "ppp", "ipsec", "gif", "stf"].contains { name.hasPrefix($0) }
     }
 
     static func hardware() -> [String: String] {
+        if Thread.isMainThread { lock.lock(); defer { lock.unlock() }; return knownHardware }
+
         var result: [String: String] = [:]
         for interface in SCNetworkInterfaceCopyAll() as? [SCNetworkInterface] ?? [] {
             guard let name = SCNetworkInterfaceGetBSDName(interface) as String? else { continue }
@@ -16,6 +24,7 @@ enum NetworkDiscovery {
             else if type == kSCNetworkInterfaceTypeEthernet as String { result[name] = "Ethernet" }
             else if type == kSCNetworkInterfaceTypeWWAN as String { result[name] = L("network.cellular") }
         }
+        lock.lock(); knownHardware = result; lock.unlock()
         return result
     }
 
@@ -38,6 +47,8 @@ enum NetworkDiscovery {
     }
 
     static func primary() -> String {
+        if Thread.isMainThread { lock.lock(); defer { lock.unlock() }; return knownPrimary }
+
         let active = Set(activeInterfaces())
         let physical = Set(hardware().keys)
         var preferred: String?
@@ -48,21 +59,17 @@ enum NetworkDiscovery {
                    active.contains(name), physical.contains(name) { preferred = name; break }
             }
         }
-        if let preferred { return preferred }
+        if let preferred {
+            lock.lock(); knownPrimary = preferred; knownActive = Array(active).sorted(); lock.unlock()
+            return preferred
+        }
         var tables = ""
         for family in ["inet", "inet6"] {
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/sbin/netstat")
-            process.arguments = ["-rn", "-f", family]
-            let pipe = Pipe()
-            process.standardOutput = pipe
-            process.standardError = FileHandle.nullDevice
-            guard (try? process.run()) != nil else { continue }
-            tables += String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
-            tables += "\n"
-            process.waitUntilExit()
+            if let output = BoundedCommand.run("/usr/sbin/netstat", ["-rn", "-f", family]) { tables += output + "\n" }
         }
-        return choosePrimary(routeText: tables, active: active, physical: physical, preferred: preferred)
+        let selected = choosePrimary(routeText: tables, active: active, physical: physical, preferred: preferred)
+        lock.lock(); knownPrimary = selected; knownActive = Array(active).sorted(); lock.unlock()
+        return selected
     }
 
     static func displayName(_ name: String) -> String {
@@ -81,23 +88,26 @@ enum NetworkDiscovery {
 func defaultInterface() -> String { NetworkDiscovery.primary() }
 
 func counters() -> [String: (received: UInt64, sent: UInt64)] {
+    guard let interfaces = if_nameindex() else { return [:] }
+    defer { if_freenameindex(interfaces) }
     var result: [String: (received: UInt64, sent: UInt64)] = [:]
-    var head: UnsafeMutablePointer<ifaddrs>?
-    guard getifaddrs(&head) == 0, let first = head else { return result }
-    defer { freeifaddrs(head) }
-    var current: UnsafeMutablePointer<ifaddrs>? = first
-    while let item = current {
-        let entry = item.pointee
-        if let address = entry.ifa_addr, address.pointee.sa_family == UInt8(AF_LINK),
-           let data = entry.ifa_data?.assumingMemoryBound(to: if_data.self) {
-            result[String(cString: entry.ifa_name)] = (UInt64(data.pointee.ifi_ibytes), UInt64(data.pointee.ifi_obytes))
+    var cursor = interfaces
+    while cursor.pointee.if_index != 0, let name = cursor.pointee.if_name {
+        defer { cursor = cursor.advanced(by: 1) }
+        var data = ifmibdata()
+        var size = MemoryLayout<ifmibdata>.size
+        var mib: [Int32] = [CTL_NET, PF_LINK, NETLINK_GENERIC, IFMIB_IFDATA, Int32(cursor.pointee.if_index), IFDATA_GENERAL]
+        // IFMIB_IFDATA returns the kernel's full if_data64 statistics. On modern
+        // macOS NET_RT_IFLIST2 can still expose truncated compatibility values.
+        if sysctl(&mib, UInt32(mib.count), &data, &size, nil, 0) == 0 {
+            result[String(cString: name)] = (data.ifmd_data.ifi_ibytes, data.ifmd_data.ifi_obytes)
         }
-        current = entry.ifa_next
     }
     return result
 }
 
 func activeInterfaces() -> [String] {
+    if Thread.isMainThread { return NetworkDiscovery.cachedActive() }
     var result = Set<String>()
     var head: UnsafeMutablePointer<ifaddrs>?
     guard getifaddrs(&head) == 0, let first = head else { return [] }

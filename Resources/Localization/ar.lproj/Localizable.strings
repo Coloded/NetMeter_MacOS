@@ -122,3 +122,16 @@
 "units.current" = "السرعة الحالية";
 "units.maximum" = "الحد الأقصى للمقياس";
 "units.totals" = "إجمالي البيانات";
+
+"gpu.cores" = "GPU · %d نواة";
+
+// Reliability and diagnostics
+"diagnostics.export" = "تصدير التشخيص…";
+"diagnostics.export_failed" = "تعذّر حفظ التشخيص";
+"metric.unavailable" = "غير متاح";
+"memory.normal" = "طبيعي";
+"memory.warning" = "تحذير";
+"memory.critical" = "حرج";
+"memory.details" = "التبديل %@ · الضغط %@";
+"monitor.selection_failed" = "تعذّر اختيار العرض المطلوب في مراقب النشاط.";
+"monitor.help" = "الوصول إلى مراقب النشاط…";

@@ -15,11 +15,10 @@ extension AppDelegate {
         panel.hidesOnDeactivate = false
         graph = NetworkGraphView(frame: panel.contentView!.bounds)
         graph.autoresizingMask = [.width, .height]
-        if selection != "auto" && counters()[selection] == nil { selection = "auto"; UserDefaults.standard.set("auto", forKey: "interface") }
         if selection != "auto" { selectedInterface = selection }
         graph.interfaceName = NetworkDiscovery.displayName(selectedInterface)
-        graph.showGrid = UserDefaults.standard.object(forKey: "grid") as? Bool ?? true
-        graph.showRates = UserDefaults.standard.object(forKey: "rates") as? Bool ?? true
+        graph.showGrid = settings.bool(property: .grid, graphID: "network")
+        graph.showRates = settings.bool(property: .rates, graphID: "network")
         graph.showMaximum = UserDefaults.standard.object(forKey: "maximum") as? Bool ?? true
         graph.fixedScale = UserDefaults.standard.double(forKey: "scale")
         if let data = UserDefaults.standard.data(forKey: "downColor"), let color = try? NSKeyedUnarchiver.unarchivedObject(ofClass: NSColor.self, from: data) { graph.downColor = color }
@@ -27,8 +26,9 @@ extension AppDelegate {
         graph.openMonitor = { [weak self] in self?.openActivityMonitor(id: "network") }
         panel.contentView = graph
         panel.alphaValue = UserDefaults.standard.object(forKey: "opacity") == nil ? 1 : UserDefaults.standard.double(forKey: "opacity")
-        panel.level = UserDefaults.standard.object(forKey: "alwaysOnTop") as? Bool == false ? .normal : .floating
+        panel.level = settings.bool(property: .top, graphID: "network") ? .floating : .normal
         docking.register(panel, id: "network")
+        containGraphWindow(panel)
         if UserDefaults.standard.object(forKey: "graphEnabled-network") as? Bool ?? true { panel.orderFrontRegardless() }
 
     }
@@ -38,7 +38,6 @@ extension AppDelegate {
         let screen = panel.screen?.visibleFrame ?? NSScreen.main!.visibleFrame
         for (index, definition) in definitions.enumerated() {
             let (id, title, color) = definition
-            if id == "gpu" && !metrics.gpuAvailable { continue }
             let width: CGFloat = 280
             let height = panel.frame.height
             let x = min(max(screen.minX + 20 + CGFloat(index % 2) * (width + 12), screen.minX), screen.maxX - width)
@@ -51,7 +50,7 @@ extension AppDelegate {
             window.hidesOnDeactivate = false
             window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
             window.level = panel.level
-            if let top = UserDefaults.standard.object(forKey: "window-top-\(id)") as? Bool { window.level = top ? .floating : .normal }
+            window.level = settings.bool(property: .top, graphID: id) ? .floating : .normal
             window.alphaValue = panel.alphaValue
             window.minSize = NSSize(width: 260, height: 120)
             window.setFrameUsingName("ResourceWindow-\(id)")
@@ -62,8 +61,8 @@ extension AppDelegate {
             view.openMonitor = { [weak self] in self?.openActivityMonitor(id: id) }
             view.percentage = id != "disk"
             view.color = color
-            view.showGrid = UserDefaults.standard.object(forKey: "window-grid-\(id)") as? Bool ?? graph.showGrid
-            view.showRates = UserDefaults.standard.object(forKey: "window-rates-\(id)") as? Bool ?? graph.showRates
+            view.showGrid = settings.bool(property: .grid, graphID: id)
+            view.showRates = settings.bool(property: .rates, graphID: id)
             view.contextMenuProvider = { [weak self] in
                 self?.makeGraphContextMenu(id: id) ?? NSMenu()
             }
@@ -73,9 +72,25 @@ extension AppDelegate {
             window.contentView = view
             resourcePanels[id] = window
             resourceViews[id] = view
+            containGraphWindow(window)
             docking.register(window, id: id)
-            if UserDefaults.standard.object(forKey: "graphEnabled-\(id)") as? Bool ?? true { window.orderFrontRegardless() }
+            if id != "gpu", UserDefaults.standard.object(forKey: "graphEnabled-\(id)") as? Bool ?? true { window.orderFrontRegardless() }
         }
+    }
+
+    func containGraphWindow(_ window: NSWindow) {
+        let screens = NSScreen.screens.map(\.visibleFrame)
+        guard let area = screens.first(where: { $0.intersects(window.frame) }) ?? screens.first else { return }
+        let width = min(window.frame.width, area.width), height = min(window.frame.height, area.height)
+        let x = max(area.minX, min(window.frame.minX, area.maxX - width))
+        let y = max(area.minY, min(window.frame.minY, area.maxY - height))
+        window.setFrame(NSRect(x: x, y: y, width: width, height: height), display: false)
+    }
+
+    @objc func containGraphWindows() {
+        containGraphWindow(panel)
+        for window in resourcePanels.values { containGraphWindow(window) }
+        updateGraphMinimumSizes()
     }
 
     @objc func toggleAllCores() {

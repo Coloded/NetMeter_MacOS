@@ -78,6 +78,6 @@ extension AppDelegate {
         if showInformation { showAbout() }
         graph.needsDisplay = true
         for view in resourceViews.values { view.needsDisplay = true }
-        tick()
+        refreshPresentation()
     }
 }

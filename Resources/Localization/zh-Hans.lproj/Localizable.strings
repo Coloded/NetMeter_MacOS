@@ -122,3 +122,16 @@
 "units.current" = "当前速度";
 "units.maximum" = "刻度最大值";
 "units.totals" = "流量总计";
+
+"gpu.cores" = "GPU · %d 核心";
+
+// Reliability and diagnostics
+"diagnostics.export" = "导出诊断…";
+"diagnostics.export_failed" = "无法保存诊断";
+"metric.unavailable" = "不可用";
+"memory.normal" = "正常";
+"memory.warning" = "警告";
+"memory.critical" = "严重";
+"memory.details" = "交换空间 %@ · 压力 %@";
+"monitor.selection_failed" = "无法选择所需的活动监视器视图。";
+"monitor.help" = "活动监视器访问…";

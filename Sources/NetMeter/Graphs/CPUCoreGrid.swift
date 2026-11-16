@@ -8,6 +8,10 @@ extension ResourceGraphView {
 
     func drawCores() {
         let count = max(coreHistory.count, ProcessInfo.processInfo.activeProcessorCount)
+        toolTip = (0..<count).map { index in
+            let value = currentCores?.indices.contains(index) == true ? String(format: " %.0f%%", currentCores![index]) : " —"
+            return L("cpu.core", index + 1) + value
+        }.joined(separator: "\n")
         let inset: CGFloat = 10
         let area = bounds.insetBy(dx: inset, dy: inset)
         let grid = Self.coreGrid(count: count, size: area.size)
@@ -17,7 +21,8 @@ extension ResourceGraphView {
         for index in 0..<count {
             let x = area.minX + CGFloat(index % grid.columns) * (cellWidth + gap)
             let y = area.maxY - CGFloat(index / grid.columns + 1) * cellHeight - CGFloat(index / grid.columns) * gap
-            let plot = NSRect(x: x, y: y, width: cellWidth, height: max(cellHeight - 20, 1))
+            let labelHeight = min(GraphTextLayout.rowHeight("values", fallback: 10, availableHeight: cellHeight), max(cellHeight - 2, 1))
+            let plot = NSRect(x: x, y: y, width: max(cellWidth, 1), height: max(cellHeight - labelHeight - 4, 1))
             GraphAppearance.plot.setFill()
             plot.fill()
             if showGrid {
@@ -43,9 +48,7 @@ extension ResourceGraphView {
             }
             let value = currentCores?.indices.contains(index) == true ? String(format: " %.0f%%", currentCores![index]) : " —"
             let label = L("cpu.core", index + 1) + (showRates ? value : "")
-            (label as NSString).draw(at: NSPoint(x: x, y: y + cellHeight - 15), withAttributes: [
-                .font: GraphFonts.font("values", fallbackSize: 10), .foregroundColor: GraphAppearance.color(id: graphID, component: "label1", fallback: GraphAppearance.text)
-            ])
+            GraphTextLayout.draw(label, rect: NSRect(x: x, y: y + cellHeight - labelHeight, width: max(cellWidth, 1), height: labelHeight), role: "values", fallback: 10, color: GraphAppearance.color(id: graphID, component: "label1", fallback: GraphAppearance.text))
         }
     }
 }

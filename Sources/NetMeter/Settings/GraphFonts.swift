@@ -66,14 +66,29 @@ extension AppDelegate {
             let font = GraphFonts.font(role, fallbackSize: role == "heading" ? 11 : 12)
             button.title = "\(font.displayName ?? font.fontName) · \(Int(font.pointSize))"
         }
+        updateGraphMinimumSizes()
         graph.needsDisplay = true
         for view in resourceViews.values { view.needsDisplay = true }
+    }
+
+    func updateGraphMinimumSizes() {
+        let header = GraphTextLayout.height(GraphFonts.font("heading", fallbackSize: 11))
+        let values = GraphTextLayout.height(GraphFonts.font("values", fallbackSize: 12))
+        for (id, window) in docking.windows {
+            let required = GraphFonts.autoFit ? 120 : header + values + (id == "memory" ? values + 4 : 0) + 110
+            let screen = window.screen?.visibleFrame ?? NSScreen.main?.visibleFrame ?? window.frame
+            window.minSize = NSSize(width: id == "network" ? 220 : 260, height: min(required, screen.height))
+            if window.frame.height < window.minSize.height {
+                let top = window.frame.maxY
+                window.setFrame(NSRect(x: window.frame.minX, y: top - window.minSize.height, width: window.frame.width, height: window.minSize.height), display: true)
+            }
+        }
     }
 
     @objc func changeRateUnit(_ sender: NSPopUpButton) {
         guard let key = sender.identifier?.rawValue, ["rateUnit", "maximumRateUnit", "totalUnit"].contains(key),
               let value = sender.selectedItem?.representedObject as? String else { return }
         UserDefaults.standard.set(value, forKey: key)
-        tick()
+        refreshPresentation()
     }
 }

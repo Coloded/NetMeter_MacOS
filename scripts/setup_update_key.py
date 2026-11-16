@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import subprocess
 from update_config import ROOT, load, save
+from sparkle_config import dependency_root
 
 config = load()
-tool = ROOT / ".build/deps/Sparkle-2.9.2/bin/generate_keys"
+tool = dependency_root() / "bin/generate_keys"
 account = config["keychainAccount"]
 result = subprocess.run([str(tool), "--account", account, "-p"], capture_output=True, text=True)
 if result.returncode:

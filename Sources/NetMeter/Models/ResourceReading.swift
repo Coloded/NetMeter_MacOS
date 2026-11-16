@@ -6,5 +6,6 @@ struct ResourceReading {
     let header: String
     let footer: String
     var secondary = ""
+    var details = ""
 }
 

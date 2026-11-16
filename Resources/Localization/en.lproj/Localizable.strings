@@ -122,3 +122,16 @@
 "units.current" = "Current speed";
 "units.maximum" = "Scale maximum";
 "units.totals" = "Total traffic";
+
+"gpu.cores" = "GPU · %d cores";
+
+// Reliability and diagnostics
+"diagnostics.export" = "Export diagnostics…";
+"diagnostics.export_failed" = "Could not save diagnostics";
+"metric.unavailable" = "unavailable";
+"memory.normal" = "normal";
+"memory.warning" = "warning";
+"memory.critical" = "critical";
+"memory.details" = "Swap %@ · pressure %@";
+"monitor.selection_failed" = "The requested Activity Monitor view could not be selected.";
+"monitor.help" = "Activity Monitor access…";

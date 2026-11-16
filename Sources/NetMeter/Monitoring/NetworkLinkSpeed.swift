@@ -2,29 +2,22 @@ import Foundation
 import CoreWLAN
 
 enum NetworkLinkSpeed {
+    private static let lock = NSLock()
     private static var cache: [String: (time: TimeInterval, megabits: Double?)] = [:]
 
     static func megabitsPerSecond(interface name: String, wifi: Bool) -> Double? {
         let now = ProcessInfo.processInfo.systemUptime
-        if let cached = cache[name], now - cached.time < 5 { return cached.megabits }
+        lock.lock(); let cached = cache[name]; lock.unlock()
+        if let cached, now - cached.time < 5 || Thread.isMainThread { return cached.megabits }
+        if Thread.isMainThread { return nil }
         let rate: Double?
         if wifi {
             let measured = CWWiFiClient.shared().interface(withName: name)?.transmitRate() ?? 0
             rate = measured.isFinite && measured > 0 ? measured : nil
         } else {
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/sbin/ifconfig")
-            process.arguments = [name]
-            let pipe = Pipe()
-            process.standardOutput = pipe
-            process.standardError = FileHandle.nullDevice
-            if (try? process.run()) != nil {
-                let data = pipe.fileHandleForReading.readDataToEndOfFile()
-                process.waitUntilExit()
-                rate = process.terminationStatus == 0 ? ethernetRate(String(data: data, encoding: .utf8) ?? "") : nil
-            } else { rate = nil }
+            rate = BoundedCommand.run("/sbin/ifconfig", [name]).flatMap(ethernetRate)
         }
-        cache[name] = (now, rate)
+        lock.lock(); cache[name] = (now, rate); lock.unlock()
         return rate
     }
 

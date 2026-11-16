@@ -1,8 +1,8 @@
 import AppKit
 import Sparkle
 
-final class UpdateController: NSObject {
-    private let controller: SPUStandardUpdaterController?
+final class UpdateController: NSObject, SPUUpdaterDelegate {
+    private var controller: SPUStandardUpdaterController?
     var statusText: String { Self.configurationIssue(Bundle.main.infoDictionary ?? [:]) ?? L("updates.source") }
 
     static func configurationIssue(_ info: [String: Any]) -> String? {
@@ -27,12 +27,26 @@ final class UpdateController: NSObject {
     }
 
     override init() {
-        if Self.configurationIssue(Bundle.main.infoDictionary ?? [:]) != nil {
-            controller = nil
-        } else {
-            controller = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
-        }
         super.init()
+        if Self.configurationIssue(Bundle.main.infoDictionary ?? [:]) != nil {
+            DiagnosticCenter.shared.record("update", "configuration_invalid")
+        } else {
+            controller = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: self, userDriverDelegate: nil)
+        }
+    }
+
+    func updater(_ updater: SPUUpdater, didAbortWithError error: Error) {
+        recordUpdateError(error)
+    }
+
+    func updater(_ updater: SPUUpdater, didFinishUpdateCycleFor updateCheck: SPUUpdateCheck, error: Error?) {
+        if let error { recordUpdateError(error) }
+    }
+
+    private func recordUpdateError(_ error: Error) {
+        let error = error as NSError
+        // Store a numeric code only: error descriptions may contain feed URLs or paths.
+        DiagnosticCenter.shared.record("update", "cycle_failed", detail: String(error.code))
     }
 
     var isConfigured: Bool { controller != nil }

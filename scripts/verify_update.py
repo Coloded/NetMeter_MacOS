@@ -4,15 +4,22 @@ from pathlib import Path
 import subprocess
 import xml.etree.ElementTree as ET
 from update_config import ROOT, load
+from sparkle_config import dependency_root
 
 SPARKLE_NS = "{http://www.andymatuschak.org/xml-namespaces/sparkle}"
-TOOLS = ROOT / ".build/deps/Sparkle-2.9.2/bin"
+TOOLS = dependency_root() / "bin"
 
 
-def verify(directory, *, account, download_url, build, version):
+def verify(directory, *, account=None, download_url, build, version, private_key=None):
     directory = Path(directory)
     feed = directory / "appcast.xml"
-    subprocess.run([str(TOOLS / "sign_update"), "--account", account, "--verify", str(feed)], check=True, capture_output=True)
+    if private_key is not None:
+        key_options = ["--ed-key-file", str(private_key)]
+    elif account:
+        key_options = ["--account", account]
+    else:
+        raise ValueError("Verification requires a Keychain account or an explicit disposable key file")
+    subprocess.run([str(TOOLS / "sign_update"), *key_options, "--verify", str(feed)], check=True, capture_output=True)
     root = ET.parse(feed).getroot()
     items = root.findall("./channel/item")
     if len(items) != 1:
@@ -33,7 +40,7 @@ def verify(directory, *, account, download_url, build, version):
     signature = enclosure.get(SPARKLE_NS + "edSignature")
     if not signature:
         raise ValueError("В ленте отсутствует EdDSA-подпись архива")
-    subprocess.run([str(TOOLS / "sign_update"), "--account", account, "--verify", str(archive), signature], check=True, capture_output=True)
+    subprocess.run([str(TOOLS / "sign_update"), *key_options, "--verify", str(archive), signature], check=True, capture_output=True)
 
 
 if __name__ == "__main__":
@@ -43,7 +50,7 @@ if __name__ == "__main__":
     config = load(require_ready=True)
     try:
         verify(args.directory, account=config["keychainAccount"],
-               download_url=f'https://github.com/{config["repository"]}/releases/latest/download/NetMeter-stable.dmg',
+               download_url=f'https://github.com/{config["repository"]}/releases/download/v{config["version"]}/NetMeter-stable.dmg',
                build=config["build"], version=config["version"])
     except (ValueError, OSError, subprocess.CalledProcessError) as error:
         raise SystemExit("Проверка обновления не пройдена: " + str(error))

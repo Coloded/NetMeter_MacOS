@@ -1,10 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-sparkle_version=2.9.2
-sparkle_sha=1cb340cbbef04c6c0d162078610c25e2221031d794a3449d89f2f56f4df77c95
+sparkle_version="$(python3 scripts/sparkle_config.py version)"
+sparkle_sha="$(python3 scripts/sparkle_config.py sha256)"
 sparkle_dir=".build/deps/Sparkle-$sparkle_version"
 if [[ -d "$sparkle_dir/Sparkle.framework" && -x "$sparkle_dir/bin/generate_appcast" ]]; then
+  codesign --verify --deep --strict "$sparkle_dir/Sparkle.framework"
   exit 0
 fi
 mkdir -p .build/deps

@@ -29,6 +29,7 @@ final class ResourceGraphView: NSView {
 
     func append(_ value: ResourceReading?) {
         reading = value
+        toolTip = [value?.header, value?.footer, value?.secondary, value?.details].compactMap { $0 }.joined(separator: "\n")
         if let value {
             history.append((value.first, value.second))
             if history.count > 60 { history.removeFirst() }
@@ -48,7 +49,11 @@ final class ResourceGraphView: NSView {
         GraphAppearance.background.setFill()
         bounds.fill()
         if showAllCores { drawCores(); return }
-        let plot = NSRect(x: 12, y: 37, width: bounds.width - 24, height: bounds.height - 65)
+        let headingHeight = min(GraphTextLayout.rowHeight("heading", fallback: 11, availableHeight: bounds.height), max(bounds.height * 0.25, 1))
+        let valueHeight = min(GraphTextLayout.rowHeight("values", fallback: 11, availableHeight: bounds.height), max(bounds.height * 0.22, 1))
+        let extra: CGFloat = reading?.details.isEmpty == false ? valueHeight + 4 : 0
+        let footerHeight = showRates ? valueHeight + extra + 12 : 8
+        let plot = NSRect(x: 12, y: footerHeight, width: max(bounds.width - 24, 1), height: max(bounds.height - footerHeight - headingHeight - 18, 1))
         GraphAppearance.plot.setFill()
         plot.fill()
         if showGrid {
@@ -74,14 +79,13 @@ final class ResourceGraphView: NSView {
             lineColor.setStroke()
             path.stroke()
         }
-        let font = GraphFonts.font("values", fallbackSize: 11)
-        func text(_ value: String, x: CGFloat, y: CGFloat, color: NSColor) {
-            (value as NSString).draw(at: NSPoint(x: x, y: y), withAttributes: [.font: y == bounds.height - 23 ? GraphFonts.font("heading", fallbackSize: 11) : font, .foregroundColor: color])
-        }
-        text(reading?.header ?? L("graph.no_sensor"), x: 12, y: bounds.height - 23, color: GraphAppearance.color(id: graphID, component: "title", fallback: GraphAppearance.text))
+        GraphTextLayout.draw(reading?.header ?? L("graph.no_sensor"), rect: NSRect(x: 12, y: bounds.height - headingHeight - 8, width: bounds.width - 24, height: headingHeight), role: "heading", fallback: 11, color: GraphAppearance.color(id: graphID, component: "title", fallback: GraphAppearance.text))
         if showRates {
-            text(reading?.footer ?? "—", x: 12, y: 10, color: GraphAppearance.color(id: graphID, component: "label1", fallback: GraphAppearance.defaultLine(id: graphID)))
-            text(reading?.secondary ?? "", x: bounds.width / 2 + 10, y: 10, color: GraphAppearance.color(id: graphID, component: percentage ? "label1" : "label2", fallback: GraphAppearance.defaultLine(id: graphID, second: !percentage)))
+            GraphTextLayout.draw(reading?.footer ?? "—", rect: NSRect(x: 12, y: 6 + extra, width: bounds.width / 2 - 18, height: valueHeight), role: "values", fallback: 11, color: GraphAppearance.color(id: graphID, component: "label1", fallback: GraphAppearance.defaultLine(id: graphID)))
+            GraphTextLayout.draw(reading?.secondary ?? "", rect: NSRect(x: bounds.width / 2 + 6, y: 6 + extra, width: bounds.width / 2 - 18, height: valueHeight), role: "values", fallback: 11, color: GraphAppearance.color(id: graphID, component: percentage ? "label1" : "label2", fallback: GraphAppearance.defaultLine(id: graphID, second: !percentage)))
+            if let details = reading?.details, !details.isEmpty {
+                GraphTextLayout.draw(details, rect: NSRect(x: 12, y: 2, width: bounds.width - 24, height: valueHeight), role: "values", fallback: 9, color: GraphAppearance.text)
+            }
         }
     }
 

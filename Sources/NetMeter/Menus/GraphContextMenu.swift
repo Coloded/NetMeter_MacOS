@@ -53,14 +53,14 @@ extension AppDelegate {
         case "settings": showSettings()
         case "cores": toggleAllCores()
         case "grid":
-            if id == "network" { graph.showGrid.toggle(); UserDefaults.standard.set(graph.showGrid, forKey: "grid") }
-            else if let view = resourceViews[id] { view.showGrid.toggle(); view.needsDisplay = true; UserDefaults.standard.set(view.showGrid, forKey: "window-grid-\(id)") }
+            if id == "network" { graph.showGrid.toggle(); settings.set(graph.showGrid, for: .grid, graphID: id) }
+            else if let view = resourceViews[id] { view.showGrid.toggle(); view.needsDisplay = true; settings.set(view.showGrid, for: .grid, graphID: id) }
         case "rates":
-            if id == "network" { graph.showRates.toggle(); UserDefaults.standard.set(graph.showRates, forKey: "rates") }
-            else if let view = resourceViews[id] { view.showRates.toggle(); view.needsDisplay = true; UserDefaults.standard.set(view.showRates, forKey: "window-rates-\(id)") }
+            if id == "network" { graph.showRates.toggle(); settings.set(graph.showRates, for: .rates, graphID: id) }
+            else if let view = resourceViews[id] { view.showRates.toggle(); view.needsDisplay = true; settings.set(view.showRates, for: .rates, graphID: id) }
         case "top":
             window.level = window.level == .floating ? .normal : .floating
-            UserDefaults.standard.set(window.level == .floating, forKey: id == "network" ? "alwaysOnTop" : "window-top-\(id)")
+            settings.set(window.level == .floating, for: .top, graphID: id)
         case "enlarge":
             if id == "cpu" { enlargeCPU(); return }
             let screen = window.screen?.visibleFrame ?? NSScreen.main!.visibleFrame

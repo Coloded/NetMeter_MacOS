@@ -32,7 +32,7 @@ def main():
         raise SystemExit('Origin must use the configured GitHub SSH repository')
     directory = ROOT / f'dist/release-v{version}-build{build}'
     verify(directory, account=config['keychainAccount'],
-           download_url=f'https://github.com/{config["repository"]}/releases/latest/download/NetMeter-stable.dmg',
+           download_url=f'https://github.com/{config["repository"]}/releases/download/{tag}/NetMeter-stable.dmg',
            build=build, version=version)
     names = ('NetMeter-stable.dmg', 'appcast.xml', 'SHA256SUMS.txt')
     metadata = {'tag': tag, 'commit': commit, 'build': build,

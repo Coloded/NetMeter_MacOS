@@ -28,7 +28,7 @@ snap them together, or keep only the graphs you need.
   and always-on-top behavior.
 - **Window groups:** snap any side to another window and move the group together.
 - **Four interface languages:** English, Russian, Arabic and Simplified Chinese.
-- **Signed updates:** Sparkle 2.9.2, signed appcasts and signed update archives.
+- **Signed updates:** Sparkle (version and SHA pinned in `updates/sparkle.json`), signed appcasts and signed update archives.
 
 ## Graphs
 
@@ -200,3 +200,15 @@ still needed before describing it as verified on that hardware.
 
 [Sparkle](https://sparkle-project.org/) is distributed under its
 [included license](Resources/ThirdParty/Sparkle-LICENSE.txt).
+
+### Reliability and diagnostics
+
+Counters are read as 64-bit interface totals; rates use elapsed monotonic time. A dash means the sensor or baseline is unavailable. Reconnection, interface changes, wake and long sampling gaps start a new baseline without counting a traffic spike. Automatic interface selection follows the primary active connection; manual selection stays manual if that interface disappears.
+
+Each graph has independent grid, values and always-on-top settings. The main settings apply the selected property to all graphs. Existing colors, fonts, units, window positions and traffic totals are retained. Large fonts use adaptive rows, optional auto-fit and single-line truncation; hover for full labels. Window positions are constrained to available screens after display changes.
+
+Memory uses binary GiB and includes the selected macOS VM accounting categories; it is an estimate, not a promise to match Activity Monitor. Swap usage and the kernel memory-pressure status are shown separately; unsupported readings are unavailable. GPU shows the busiest available reporting device, with its core count when provided. Sensors retry discovery after loss and wake.
+
+Use **Export diagnostics** in the menu-bar menu to save a JSON report. It contains app/OS versions, whitelisted display settings, sensor availability and at most 200 symbolic events. It excludes traffic payloads, addresses, paths, URLs, credentials and private update keys. System logs use subsystem `local.traffic.meter`. Activity Monitor section selection requires Accessibility access and may depend on the macOS version; help can be reopened in settings.
+
+Memory accounting: `max(0, min(total, (active + inactive + wired + compressor − purgeable − external) × pageSize))`. This excludes free memory and subtracts reclaimable/file-backed categories; categories can change during sampling.

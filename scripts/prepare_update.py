@@ -41,7 +41,7 @@ def main():
         subprocess.run(["hdiutil", "create", "-volname", "NetMeter", "-fs", "HFS+", "-srcfolder", str(payload), "-format", "UDZO", str(image)], check=True)
         subprocess.run(["hdiutil", "verify", str(image)], check=True)
         (artifacts / "NetMeter-stable.md").write_text(notes)
-        prefix = f'https://github.com/{config["repository"]}/releases/latest/download/'
+        prefix = f'https://github.com/{config["repository"]}/releases/download/v{config["version"]}/'
         subprocess.run([str(TOOLS / "generate_appcast"), "--account", account,
                         "--maximum-deltas", "0", "--maximum-versions", "1",
                         "--download-url-prefix", prefix, "--embed-release-notes", str(artifacts)], check=True)

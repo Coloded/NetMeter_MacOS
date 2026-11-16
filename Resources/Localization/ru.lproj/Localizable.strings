@@ -122,3 +122,16 @@
 "units.current" = "Текущая скорость";
 "units.maximum" = "Максимум шкалы";
 "units.totals" = "Всего трафика";
+
+"gpu.cores" = "GPU · %d ядер";
+
+// Reliability and diagnostics
+"diagnostics.export" = "Экспорт диагностики…";
+"diagnostics.export_failed" = "Не удалось сохранить диагностику";
+"metric.unavailable" = "недоступно";
+"memory.normal" = "нормальное";
+"memory.warning" = "повышенное";
+"memory.critical" = "критическое";
+"memory.details" = "Swap %@ · давление %@";
+"monitor.selection_failed" = "Не удалось выбрать нужный раздел Мониторинга системы.";
+"monitor.help" = "Доступ к Мониторингу системы…";

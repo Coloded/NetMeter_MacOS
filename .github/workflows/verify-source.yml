@@ -1,0 +1,36 @@
+name: Verify source
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Localization catalogs
+        run: python3 Tests/test_localization.py
+      - name: Core regressions
+        run: bash Tests/run_core_regressions.sh
+      - name: Command timeout regressions
+        run: bash Tests/run_command_regressions.sh
+      - name: Collector regressions
+        run: bash Tests/run_collector_regressions.sh
+      - name: Text layout regressions
+        run: bash Tests/run_layout_regressions.sh
+      - name: Diagnostic export regressions
+        run: python3 Tests/run_diagnostic_regressions.py
+      - name: Bundle synchronization and build locking
+        run: |
+          python3 Tests/test_copy_bundle.py
+          python3 Tests/test_build_lock.py
+      - name: Universal application build
+        run: bash build.sh --no-install
+      - name: Update signature regressions with disposable keys
+        run: python3 Tests/test_updates.py
+      - name: Bundle verification
+        run: |
+          codesign --verify --deep --strict .build/staging/NetMeter.app
+          lipo -archs .build/staging/NetMeter.app/Contents/MacOS/NetMeter

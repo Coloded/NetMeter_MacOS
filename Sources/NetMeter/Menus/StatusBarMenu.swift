@@ -23,8 +23,8 @@ extension AppDelegate {
             let item = NSMenuItem(title: title, action: #selector(toggleGraph(_:)), keyEquivalent: "")
             item.representedObject = id
             item.target = self
-            item.isEnabled = id != "gpu" || metrics.gpuAvailable
-            if id == "gpu" && !metrics.gpuAvailable { item.title = L("menu.gpu_unavailable") }
+            item.isEnabled = id != "gpu" || gpuAvailable
+            if id == "gpu" && !gpuAvailable { item.title = L("menu.gpu_unavailable") }
             graphsMenu.addItem(item)
             graphItems[id] = item
         }
@@ -37,6 +37,7 @@ extension AppDelegate {
         menu.addItem(languageMenu())
         menu.addItem(NSMenuItem(title: L("menu.about"), action: #selector(showAbout), keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: L("menu.updates"), action: #selector(checkForUpdates), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: L("diagnostics.export"), action: #selector(exportDiagnostics), keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: L("menu.quit"), action: #selector(quit), keyEquivalent: "q"))
         menu.items.filter { $0.action != nil }.forEach { $0.target = self }
         statusItem.menu = menu
@@ -58,6 +59,8 @@ extension AppDelegate {
     }
 
     func updateGraphMenu() {
+        graphItems["gpu"]?.isEnabled = gpuAvailable
+        graphItems["gpu"]?.title = gpuAvailable ? L("graph.gpu") : L("menu.gpu_unavailable")
         openNetworkItem?.isHidden = panel.isVisible
         graphItems["network"]?.state = panel.isVisible ? .on : .off
         for (id, item) in graphItems where id != "network" { item.state = resourcePanels[id]?.isVisible == true ? .on : .off }
@@ -66,10 +69,10 @@ extension AppDelegate {
 
     @objc func selectInterface(_ sender: NSMenuItem) {
         guard let name = sender.representedObject as? String else { return }
+        selectionGeneration += 1
         selection = name
         selectedInterface = name == "auto" ? defaultInterface() : name
         UserDefaults.standard.set(selection, forKey: "interface")
-        previous = nil
         graph.samples = []
         graph.interfaceName = NetworkDiscovery.displayName(selectedInterface)
         rebuildInterfaceMenu()

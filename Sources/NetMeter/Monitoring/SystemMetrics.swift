@@ -7,6 +7,7 @@ final class SystemMetrics {
     private var perCoreTicks: [[UInt32]]?
     private var diskDriver: io_registry_entry_t = 0
     private var diskIdentifier = ""
+    private var diskDiscoveryTime = -Double.infinity
     var diskName: String { diskIdentifier.isEmpty ? L("disk.unknown") : L("disk.summary", diskIdentifier) }
     private var diskPrevious: (UInt64, UInt64, TimeInterval)?
     private(set) var gpuAvailable = false
@@ -14,6 +15,12 @@ final class SystemMetrics {
     init() {
         findSystemDisk()
         gpuAvailable = gpu() != nil
+    }
+
+    func resetBaselines() {
+        cpuTicks = nil; perCoreTicks = nil; diskPrevious = nil
+        if diskDriver != 0 { IOObjectRelease(diskDriver); diskDriver = 0 }
+        diskDiscoveryTime = -.infinity
     }
 
     deinit { if diskDriver != 0 { IOObjectRelease(diskDriver) } }
@@ -74,29 +81,45 @@ final class SystemMetrics {
         let total = Double(ProcessInfo.processInfo.physicalMemory)
         let used = min(max(pages * Double(pageSize), 0), total)
         return ResourceReading(first: used / total * 100, header: L("memory.summary"),
-                               footer: String(format: "%.1f / %.0f GB", used / 1073741824, total / 1073741824),
-                               secondary: String(format: "%.1f%%", used / total * 100))
+                               footer: String(format: "%.1f / %.0f GiB", used / 1073741824, total / 1073741824),
+                               secondary: String(format: "%.1f%%", used / total * 100), details: memoryDetails())
     }
 
     func gpu() -> ResourceReading? {
         var iterator: io_iterator_t = 0
         guard IOServiceGetMatchingServices(kIOMainPortDefault, IOServiceMatching("IOAccelerator"), &iterator) == KERN_SUCCESS else { return nil }
         defer { IOObjectRelease(iterator) }
-        var values: [Double] = []
+        var values: [(usage: Double, cores: Int?)] = []
         while case let service = IOIteratorNext(iterator), service != 0 {
             defer { IOObjectRelease(service) }
             if let stats = IORegistryEntryCreateCFProperty(service, "PerformanceStatistics" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? [String: Any],
                let value = stats["Device Utilization %"] as? NSNumber,
                value.doubleValue.isFinite, (0...100).contains(value.doubleValue) {
-                values.append(value.doubleValue)
+                let reported = IORegistryEntryCreateCFProperty(service, "gpu-core-count" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? NSNumber
+                let cores = reported.flatMap { $0.intValue > 0 ? $0.intValue : nil }
+                values.append((value.doubleValue, cores))
             }
         }
-        guard let value = values.max() else { return nil }
-        return ResourceReading(first: value, header: L("gpu.summary"),
-                               footer: L("cpu.load", value))
+        guard let device = values.max(by: { $0.usage < $1.usage }) else { gpuAvailable = false; return nil }
+        gpuAvailable = true
+        return ResourceReading(first: device.usage, header: device.cores.map { L("gpu.cores", $0) } ?? L("gpu.summary"),
+                               footer: L("cpu.load", device.usage))
+    }
+
+    private func memoryDetails() -> String {
+        var swap = xsw_usage()
+        var size = MemoryLayout<xsw_usage>.size
+        let swapText = sysctlbyname("vm.swapusage", &swap, &size, nil, 0) == 0
+            ? String(format: "%.1f GiB", Double(swap.xsu_used) / 1073741824) : L("metric.unavailable")
+        var level: Int32 = 0
+        size = MemoryLayout<Int32>.size
+        let status = sysctlbyname("kern.memorystatus_vm_pressure_level", &level, &size, nil, 0)
+        let key = status != 0 ? "metric.unavailable" : level == 1 ? "memory.normal" : level == 2 ? "memory.warning" : level == 4 ? "memory.critical" : "metric.unavailable"
+        return L("memory.details", swapText, L10n.text(key))
     }
 
     private func findSystemDisk() {
+        diskDiscoveryTime = ProcessInfo.processInfo.systemUptime
         var filesystem = statfs()
         guard statfs("/", &filesystem) == 0 else { return }
         let source = withUnsafePointer(to: &filesystem.f_mntfromname) {
@@ -125,10 +148,14 @@ final class SystemMetrics {
     }
 
     func disk() -> ResourceReading? {
+        if diskDriver == 0 && ProcessInfo.processInfo.systemUptime - diskDiscoveryTime >= 5 { findSystemDisk() }
         guard diskDriver != 0,
               let stats = IORegistryEntryCreateCFProperty(diskDriver, "Statistics" as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue() as? [String: Any],
               let read = (stats["Bytes (Read)"] as? NSNumber)?.uint64Value,
-              let write = (stats["Bytes (Write)"] as? NSNumber)?.uint64Value else { return nil }
+              let write = (stats["Bytes (Write)"] as? NSNumber)?.uint64Value else {
+            if diskDriver != 0 { IOObjectRelease(diskDriver); diskDriver = 0; diskIdentifier = ""; diskPrevious = nil; diskDiscoveryTime = ProcessInfo.processInfo.systemUptime }
+            return nil
+        }
         let now = ProcessInfo.processInfo.systemUptime
         defer { diskPrevious = (read, write, now) }
         guard let old = diskPrevious, now > old.2, read >= old.0, write >= old.1 else { return nil }

@@ -1,85 +1,58 @@
 #!/usr/bin/env python3
-"""Offline integration test of signed feeds and archives using this app's key."""
+"""Offline real-Sparkle signature regression using a disposable seed, no Keychain."""
 from pathlib import Path
-import sys
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-import argparse
-import plistlib
+import base64
+import os
+import re
 import subprocess
+import sys
 import tempfile
-from copy_bundle import copy_bundle
-from update_config import ROOT, load
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from verify_update import TOOLS, verify
 
+def run(*args):
+    return subprocess.check_output(args, stderr=subprocess.STDOUT, text=True, timeout=20)
 
-def run(*arguments):
-    result = subprocess.run(arguments, capture_output=True, text=True)
-    if result.returncode:
-        raise RuntimeError((result.stdout + result.stderr)[-4000:])
-
-
-parser = argparse.ArgumentParser(description="Локальная проверка подписей тестового обновления")
-parser.add_argument("--dmg", action="store_true", help="Проверить DMG вместо ZIP")
-args = parser.parse_args()
-config = load()
-if not config["publicEdKey"]:
-    raise SystemExit("Сначала выполните scripts/setup_update_key.py")
-if not (ROOT / ".build/staging/NetMeter.app/Contents/Info.plist").exists():
-    raise SystemExit("Сначала выполните bash build.sh --no-install")
-
-with tempfile.TemporaryDirectory(prefix="traffic-updater-test-") as temporary:
-    temporary = Path(temporary)
-    app = temporary / "NetMeter.app"
-    copy_bundle(ROOT / ".build/staging/NetMeter.app", app)
-    info_file = app / "Contents/Info.plist"
-    info = plistlib.loads(info_file.read_bytes())
-    info.update(CFBundleVersion="2", CFBundleShortVersionString="1.0.1",
-                SUFeedURL="https://example.invalid/appcast.xml", SUPublicEDKey=config["publicEdKey"],
-                SUEnableAutomaticChecks=False)
-    info_file.write_bytes(plistlib.dumps(info))
-    run("codesign", "--force", "--sign", "-", str(app))
-    artifacts = temporary / "artifacts"
-    artifacts.mkdir()
-    archive = artifacts / ("NetMeter-stable.dmg" if args.dmg else "NetMeter-stable.zip")
-    if args.dmg:
-        payload = temporary / "payload"
-        copy_bundle(app, payload / "NetMeter.app")
-        (payload / "Applications").symlink_to("/Applications")
-        run("hdiutil", "create", "-volname", "NetMeter updater test", "-fs", "HFS+", "-srcfolder", str(payload), "-format", "UDZO", str(archive))
-        run("hdiutil", "verify", str(archive))
-    else:
-        run("ditto", "-c", "-k", "--keepParent", str(app), str(archive))
-    (artifacts / "NetMeter-stable.md").write_text("# Local integration test\nSigned release notes.\n")
-    run(str(TOOLS / "generate_appcast"), "--account", config["keychainAccount"],
-        "--maximum-deltas", "0", "--maximum-versions", "1", "--download-url-prefix",
-        "https://example.invalid/", "--embed-release-notes", str(artifacts))
-    options = dict(account=config["keychainAccount"], download_url="https://example.invalid/" + archive.name,
-                   build=2, version="1.0.1")
-    verify(artifacts, **options)
-    print("PASS: подписанная лента, архив и метаданные проходят проверку")
-
-    def rejects():
+with tempfile.TemporaryDirectory(prefix="netmeter-update-qa-") as root:
+    root = Path(root)
+    key = root / "fixture.key"
+    key.write_bytes(base64.b64encode(os.urandom(32)))
+    key.chmod(0o600)
+    archive = root / "NetMeter-stable.dmg"
+    archive.write_bytes(b"fixture archive payload" * 1024)
+    signature = run(str(TOOLS / "sign_update"), "--ed-key-file", str(key), "-p", str(archive)).strip()
+    url = "https://github.com/fixture/repo/releases/download/v9.9.9/NetMeter-stable.dmg"
+    feed = root / "appcast.xml"
+    feed.write_text(f'''<?xml version="1.0"?><rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"><channel><title>QA</title><item><title>Fixture</title><enclosure url="{url}" length="{archive.stat().st_size}" sparkle:version="99" sparkle:shortVersionString="9.9.9" sparkle:edSignature="{signature}" /></item></channel></rss>''')
+    run(str(TOOLS / "sign_update"), "--ed-key-file", str(key), str(feed))
+    options = dict(private_key=key, download_url=url, build=99, version="9.9.9")
+    verify(root, **options)
+    checks = 1
+    def rejects(**override):
+        global checks
         try:
-            verify(artifacts, **options)
+            verify(root, **(options | override))
         except (ValueError, subprocess.CalledProcessError):
+            checks += 1
             return
-        raise AssertionError("Изменённый файл был принят")
-
-    feed = artifacts / "appcast.xml"
+        raise AssertionError("Invalid update accepted")
     original_feed = feed.read_bytes()
-    feed.write_bytes(original_feed.replace(b"<title>", b"<title>tampered-", 1))
+    feed.write_bytes(original_feed.replace(b"Fixture", b"Changed", 1))
     rejects()
     feed.write_bytes(original_feed)
-    print("PASS: изменение appcast.xml отвергается")
-
     original_archive = archive.read_bytes()
-    changed = bytearray(original_archive)
-    changed[-1] ^= 1
-    archive.write_bytes(changed)
+    archive.write_bytes(original_archive[:-1] + bytes([original_archive[-1] ^ 1]))
     rejects()
-    print("PASS: изменение архива без изменения его размера отвергается")
-
-if not config["repository"]:
-    result = subprocess.run(["python3", "scripts/prepare_update.py"], cwd=ROOT, capture_output=True, text=True)
-    assert result.returncode != 0 and "Обновления не подключены" in result.stderr
-    print("PASS: выпуск без настроенного репозитория заблокирован")
+    archive.write_bytes(original_archive)
+    rejects(build=98)
+    rejects(version="9.9.8")
+    rejects(download_url=url.replace("v9.9.9", "v9.9.8"))
+    archive.write_bytes(original_archive + b"trailing")
+    rejects()
+    try:
+        verify(root, account=None, download_url=url, build=99, version="9.9.9")
+    except ValueError:
+        checks += 1
+    else:
+        raise AssertionError("Missing signing source must reject without Keychain fallback")
+    print(f"PASS: {checks} real Sparkle signature/metadata regressions; temporary seed, no Keychain; archive is simulated bytes")
